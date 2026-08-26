@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ChatServer/ChatServer.csproj" />
+  <Project Path="DuplexClient/DuplexClient.csproj" />
+  <Project Path="PollingClient/PollingClient.csproj" />
+</Solution>
