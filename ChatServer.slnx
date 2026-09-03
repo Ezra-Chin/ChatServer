@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Chat/Chat.csproj" Id="f01e5335-07dd-4942-ae04-32bf9e866581" />
+  <Project Path="ChatContract/ChatContract.csproj" Id="d5179468-ddc7-4ee1-9c62-baa37840bac8" />
   <Project Path="ChatServer/ChatServer.csproj" Id="e44b3f95-00a9-4a7f-b34e-db59ef0686f5" />
   <Project Path="DuplexClient/DuplexClient.csproj" Id="8765cf36-e547-49ac-9ea3-5290380c4240" />
   <Project Path="PollingClient/PollingClient.csproj" Id="b56dd508-717d-4d27-93ff-97ac96a690c6" />

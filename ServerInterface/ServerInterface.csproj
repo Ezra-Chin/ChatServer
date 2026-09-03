@@ -46,9 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChatServer\ChatServer.csproj">
-      <Project>{e44b3f95-00a9-4a7f-b34e-db59ef0686f5}</Project>
-      <Name>ChatServer</Name>
+    <ProjectReference Include="..\Chat\Chat.csproj">
+      <Project>{f01e5335-07dd-4942-ae04-32bf9e866581}</Project>
+      <Name>Chat</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,15 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ServiceModel;
+
 
 namespace ChatServer
 {
-    internal class Program
+    class Program
     {
         static void Main(string[] args)
         {
+
+            ServiceHost host =
+            new ServiceHost(
+                typeof(ChatService),
+                new Uri(
+                "net.tcp://localhost:9000/Chat"));
+
+
+
+            host.AddServiceEndpoint(
+                typeof(ChatContract.IChatService),
+                new NetTcpBinding(),
+                "");
+
+
+
+            host.Open();
+
+
+            Console.WriteLine(
+                "Chat Server Running");
+
+
+            Console.ReadLine();
+
+
+            host.Close();
+
         }
     }
 }
