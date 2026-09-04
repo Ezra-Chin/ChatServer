@@ -8,11 +8,10 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="80"/>
 			<RowDefinition Height="*"/>
-			<RowDefinition Height="80"/>
 		</Grid.RowDefinitions>
 
 
-
+		<!-- Header -->
 		<Border Grid.Row="0"
                 Background="White"
                 BorderBrush="#E5E5E5"
@@ -21,23 +20,31 @@
 			<Grid Margin="30,0">
 
 				<TextBlock x:Name="WelcomeText"
-                           Text="Welcome"
+                           Text="Welcome username"
                            FontSize="24"
                            FontWeight="SemiBold"
                            Foreground="#222222"
                            VerticalAlignment="Center"/>
 
-				<Button Content="Sign Out"
-                        Width="100"
-                        Height="35"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Click="SignOut_Click"/>
+				<StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+
+					<Button Content="Create a channel"
+                            Width="130"
+                            Height="35"
+                            Margin="0,0,10,0"
+                            Click="CreateChannel_Click"/>
+					<Button Content="Sign Out"
+                            Width="80"
+                            Height="35"
+                            Click="SignOut_Click"/>
+
+				</StackPanel>
 
 			</Grid>
 
 		</Border>
-
 
 
 		<Grid Grid.Row="1"
@@ -52,7 +59,7 @@
                        FontSize="28"
                        FontWeight="SemiBold"
                        Foreground="#222222"
-                       Margin="0,0,0,20"/>
+                       Margin="-18,-30,18,50"/>
 
 
 			<ListBox x:Name="ChannelList"
@@ -100,23 +107,6 @@
 			</ListBox>
 
 		</Grid>
-
-
-
-		<Border Grid.Row="2"
-                Background="White"
-                BorderBrush="#E5E5E5"
-                BorderThickness="0,1,0,0">
-
-			<Button Content="Create Channel"
-                    Width="140"
-                    Height="38"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Margin="0,0,30,0"
-                    Click="CreateChannel_Click"/>
-
-		</Border>
 
 	</Grid>
 

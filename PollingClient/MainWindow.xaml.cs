@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Runtime.Remoting.Messaging;
+using System.ServiceModel;
 
 namespace PollingClient
 {
@@ -20,9 +22,19 @@ namespace PollingClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        ChannelFactory<ServerInterface.ServerInterface> ChannelFactory;
+        ServerInterface.ServerInterface foob;
         public MainWindow()
         {
             InitializeComponent();
+
+
+            NetTcpBinding tcp = new NetTcpBinding();
+
+            //REMINDER TO CHANGE THIS DURING PROD 
+            string URL = "net.tcp://localhost:8000/ChatServer";
+
+            ChannelFactory = new ChannelFactory<ServerInterface.ServerInterface>(tcp, URL);
         }
     }
 }
