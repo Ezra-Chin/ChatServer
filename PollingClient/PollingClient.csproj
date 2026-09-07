@@ -57,11 +57,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\ChannelListPage.xaml.cs">
+      <DependentUpon>ChannelListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\ChannelView.xaml.cs">
+      <DependentUpon>ChannelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
-    <Page Include="src\PrivateChatWindow.xaml">
+    <Compile Include="src\PrivateChatView.xaml.cs">
+      <DependentUpon>PrivateChatView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="src\PrivateChatView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="src\ChannelView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -113,13 +123,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChatContract\ChatContract.csproj">
+      <Project>{d5179468-ddc7-4ee1-9c62-baa37840bac8}</Project>
+      <Name>ChatContract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Chat\Chat.csproj">
       <Project>{f01e5335-07dd-4942-ae04-32bf9e866581}</Project>
       <Name>Chat</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ServerInterface\ServerInterface.csproj">
-      <Project>{34771266-31fe-4968-857e-391a00c3498a}</Project>
-      <Name>ServerInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

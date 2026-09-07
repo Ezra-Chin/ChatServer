@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,15 +44,11 @@
   <ItemGroup>
     <Compile Include="Channel.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Notification.cs" />
+    <Compile Include="PrivateChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedFile.cs" />
     <Compile Include="User.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ServerInterface\ServerInterface.csproj">
-      <Project>{34771266-31fe-4968-857e-391a00c3498a}</Project>
-      <Name>ServerInterface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

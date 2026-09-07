@@ -8,15 +8,17 @@ namespace Chat
 {
     public class SharedFile
     {
-        public string fileName;
-        public string sharedBy;
-        public byte[] data;
+        public string fileName { get; set; }
+        public string sharedBy { get; set; }
+        public byte[] data { get; set; }
+        public string channelName { get; set; }
 
         public SharedFile()
         {
             
             sharedBy = "";
             data = null;
+         
         }
     }
 }

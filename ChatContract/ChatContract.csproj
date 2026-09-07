@@ -47,6 +47,7 @@
     <Compile Include="ChatUpdateData.cs" />
     <Compile Include="IChatCallBack.cs" />
     <Compile Include="IChatService.cs" />
+    <Compile Include="IPollingChatService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

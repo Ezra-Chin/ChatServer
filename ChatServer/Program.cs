@@ -20,7 +20,12 @@ namespace ChatServer
             host.AddServiceEndpoint(
                 typeof(ChatContract.IChatService),
                 new NetTcpBinding(),
-                "");
+                "Duplex");
+
+            host.AddServiceEndpoint(
+                typeof(ChatContract.IPollingChatService),
+                new NetTcpBinding(),
+                "Polling");
 
 
 

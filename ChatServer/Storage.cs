@@ -22,5 +22,8 @@ namespace ChatServer
         public static object LockObject =
             new object();
 
+        public static List<PrivateChat>  PrivateChats = new List<PrivateChat>();
+
+        public static List<Notification> Notifications = new List<Notification>();
     }
 }

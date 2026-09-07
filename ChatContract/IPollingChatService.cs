@@ -5,9 +5,9 @@ using Chat;
 
 namespace ChatContract
 {
-    [ServiceContract(
-        CallbackContract = typeof(IChatCallback))]
-    public interface IChatService
+    [ServiceContract]
+    
+    public interface IPollingChatService
     {
 
         [OperationContract]
@@ -41,7 +41,7 @@ namespace ChatContract
 
         [OperationContract]
         void SendMessage(
-            string userId,string channelName,
+            string userId, string channelName,
             string message);
 
 
@@ -64,7 +64,7 @@ namespace ChatContract
         SharedFile ShareFile(
             string userId,
             string fileName,
-            byte[] data, 
+            byte[] data,
             string channelName
             );
 

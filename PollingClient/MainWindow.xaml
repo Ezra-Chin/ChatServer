@@ -11,7 +11,8 @@
 
     <Grid Background="White">
 
-        <ContentControl x:Name="MainContent"/>
+        <Frame x:Name="MainFrame"
+               NavigationUIVisibility="Hidden"/>
 
     </Grid>
 
