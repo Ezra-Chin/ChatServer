@@ -2,6 +2,7 @@
 
 namespace Chat
 {
+    //show the logged in user
     public class User
     {
         public string userId { get; set; }

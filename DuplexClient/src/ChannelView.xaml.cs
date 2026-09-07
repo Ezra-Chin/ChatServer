@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-
-
 namespace DuplexClient.src
 {
     public partial class ChannelView : Page
@@ -29,8 +27,9 @@ namespace DuplexClient.src
             this.foob = foob;
             ChannelNameText.Text = channelName;
             StartPolling();
-
         }
+
+        //refresh channel data and notification
         //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
         public async void StartPolling()
         {
@@ -50,6 +49,7 @@ namespace DuplexClient.src
             {
             }
         }
+
         private async Task LoadNotifications()
         {
             try
@@ -69,16 +69,15 @@ namespace DuplexClient.src
                             break;
                         }
                     }
+
                     if (open == false)
                     {
                         OpenPrivateChat(notification.sender);
-
                     }
+
                     Task taskb = new Task(() => foob.MarkNotificationAsRead(notification));
                     taskb.Start();
                     await taskb;
-
-
                 }
             }
             catch (Exception ex)
@@ -86,6 +85,7 @@ namespace DuplexClient.src
                 MessageBox.Show("Unable to Load Notifications");
             }
         }
+
         private async Task LoadChannel()
         {
             try
@@ -99,10 +99,10 @@ namespace DuplexClient.src
                     MessageBox.Show("Channel not found", "Channel not found", MessageBoxButton.OK);
                     NavigationService.GoBack();
                 }
+
                 MessageList.ItemsSource = channel.messages;
                 MemberList.ItemsSource = channel.members;
                 FileList.ItemsSource = channel.files;
-
             }
             catch (Exception ex)
             {
@@ -110,9 +110,11 @@ namespace DuplexClient.src
             }
         }
 
+        //send msg to current channel
         private async void Send_Click(object sender, RoutedEventArgs e)
         {
             string message = MessageTextBox.Text.Trim();
+            
             if (string.IsNullOrEmpty(message))
             {
                 return;
@@ -134,6 +136,7 @@ namespace DuplexClient.src
             }
         }
 
+        //leave current channel
         private void Leave_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -148,10 +151,13 @@ namespace DuplexClient.src
             }
         }
 
+        //select a member then open a private chat
         private void Member_Selected(object sender, SelectionChangedEventArgs e)
         {
             if (MemberList.SelectedItem == null)
+            {
                 return;
+            }
 
             string selectedUser = MemberList.SelectedItem as string;
 
@@ -159,12 +165,13 @@ namespace DuplexClient.src
             {
                 return;
             }
+
             OpenPrivateChat(selectedUser);
-
-
 
             MemberList.SelectedItem = null;
         }
+
+        //open a new window for private chat
         private void OpenPrivateChat(string recipient)
         {
             foreach (PrivateChatView window in privateWindows)
@@ -178,7 +185,6 @@ namespace DuplexClient.src
 
             PrivateChatView newWindow = new PrivateChatView(foob, userId, recipient);
 
-
             privateWindows.Add(newWindow);
 
             newWindow.Closed += (s, e) =>
@@ -188,6 +194,7 @@ namespace DuplexClient.src
 
             newWindow.Show();
         }
+
         private void FileList_DoubleClick(object sender, RoutedEventArgs e)
         {
             if (FileList.SelectedItem == null)
@@ -202,8 +209,9 @@ namespace DuplexClient.src
             dialog.FileName = file.fileName;
 
             if (dialog.ShowDialog() != true)
+            {
                 return;
-
+            }
 
             try
             {
@@ -217,6 +225,7 @@ namespace DuplexClient.src
                    MessageBoxButton.OK);
             }
         }
+
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
@@ -224,26 +233,26 @@ namespace DuplexClient.src
             {
                 return;
             }
+
             try
             {
-
-
                 byte[] data = File.ReadAllBytes(dialog.FileName);
                 if (data.Length > 2 * 1024 * 1024)
                 {
                     MessageBox.Show("File size exceeds 2MB", "File Size Exceeded", MessageBoxButton.OK);
                     return;
                 }
+
                 string fileName = Path.GetFileName(dialog.FileName);
                 string extension = Path.GetExtension(fileName);
 
                 string[] allowedExtension = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".txt" };
+                
                 if (!allowedExtension.Contains(extension))
                 {
                     MessageBox.Show("File type is not supported");
                     return;
                 }
-
 
                 Task<SharedFile> task = new Task<SharedFile>(() => foob.ShareFile(userId, fileName, data, channelName));
                 task.Start();
@@ -267,6 +276,5 @@ namespace DuplexClient.src
                      MessageBoxButton.OK);
             }
         }
-
     }
 }

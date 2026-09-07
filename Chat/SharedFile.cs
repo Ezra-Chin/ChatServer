@@ -9,10 +9,8 @@
 
         public SharedFile()
         {
-
             sharedBy = "";
             data = null;
-
         }
     }
 }

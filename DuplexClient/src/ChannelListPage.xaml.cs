@@ -26,7 +26,6 @@ namespace DuplexClient.src
             LoadChannels();
         }
       
-
         public void ChannelListUpdate()
         {
             Dispatcher.Invoke(() =>
@@ -39,14 +38,11 @@ namespace DuplexClient.src
         {
             try
             {
-
-
                 Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
                 task.Start();
                 List<Channel> channels = await task;
 
                 ChannelList.ItemsSource = channels;
-
             }
             catch (Exception ex)
             {
@@ -54,6 +50,7 @@ namespace DuplexClient.src
 
             }
         }
+
         private void Join_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -64,8 +61,6 @@ namespace DuplexClient.src
                 foob.JoinChannel(userId, channel.channelName);
                 NavigationService.Navigate(
                     new ChannelView(userId, channel.channelName, foob));
-
-
             }
             catch (Exception ex)
             {
@@ -74,13 +69,11 @@ namespace DuplexClient.src
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-
             }
-
         }
 
+        //creates new channel
         private async void CreateChannel_Click(object sender, RoutedEventArgs e)
-
         {
             string channelName = ChannelNameTextBox.Text.Trim();
             ChannelNameTextBox.Text = channelName;
@@ -109,7 +102,6 @@ namespace DuplexClient.src
                 }
                 ChannelNameTextBox.Clear();
 
-
                 LoadChannels();
             }
             catch (Exception ex)
@@ -129,7 +121,6 @@ namespace DuplexClient.src
             {
                 foob.SignOut(userId);
                 NavigationService.Navigate(new LoginView(foob));
-
             }
             catch (Exception ex)
             {
@@ -141,6 +132,4 @@ namespace DuplexClient.src
             }
         }
     }
-
-
 }

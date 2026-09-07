@@ -22,86 +22,69 @@ namespace ChatServer
         //        clients.Add(callback);
         //    }
         //}
+
+        //sign in to chat server
         public bool SignIn(string userId)
         {
-
             lock (Storage.LockObject)
             {
-
+                //prevent duplicate user session
                 if (Storage.Users.Any(
                     x => x.userId == userId))
                 {
                     return false;
                 }
 
-
                 Storage.Users.Add(
                     new User
                     {
                         userId = userId
                     });
-
             }
             return true;
-
         }
 
-
-
+        //sign user out & rmv user from channel
         public void SignOut(string userId)
         {
-
             lock (Storage.LockObject)
             {
-
                 User user =
                 Storage.Users.FirstOrDefault(
                     x => x.userId == userId);
 
-
                 if (user != null)
                 {
-
                     LeaveChannel(userId);
-
                     Storage.Users.Remove(user);
-
                 }
-
             }
-
         }
 
-
-
+        //returns list of available channels
         public List<Channel> GetChannels()
         {
             return Storage.Channels;
         }
 
-
-
+        //create new channel
         public bool CreateChannel(
             string userId,
             string channelName)
         {
-
             lock (Storage.LockObject)
             {
-
                 if (Storage.Channels.Any(
                     x => x.channelName == channelName))
                 {
                     return false;
                 }
 
-
                 Storage.Channels.Add(
                     new Channel
                     {
                         channelName = channelName
                     });
-
             }
 
             OperationContext.Current.GetCallbackChannel<IChatCallback>().ChannelListUpdate();
@@ -118,81 +101,62 @@ namespace ChatServer
             //    }
             //}
             return true;
-
         }
 
-
-
+        //add user to a channel
         public void JoinChannel(
             string userId,
             string channelName)
         {
-
             lock (Storage.LockObject)
             {
-
                 Channel channel =
                 Storage.Channels.FirstOrDefault(
                     x => x.channelName == channelName);
 
-
                 if (channel == null)
                     return;
 
-
-
+                //rmv user from previous channel
                 foreach (Channel c in Storage.Channels)
                 {
                     c.members.Remove(userId);
                 }
 
-
-
+                //add user to selected channels
                 channel.members.Add(userId);
-
-
 
                 User user =
                 Storage.Users.First(
                     x => x.userId == userId);
 
-
                 user.currentChannel =
                     channelName;
 
                 user.joinedChannelAt = DateTime.Now;
-
             }
-
         }
 
-
-
+        //rmv user from their curr channel
         public void LeaveChannel(
             string userId)
         {
-
             foreach (Channel c in Storage.Channels)
             {
                 c.members.Remove(userId);
             }
 
-
-
             User user =
             Storage.Users.FirstOrDefault(
                 x => x.userId == userId);
-
 
             if (user != null)
             {
                 user.currentChannel = null;
             }
-
         }
 
-
-
+        //Sends msg to public channel
         public void SendMessage(
             string userId,
             string channelName,
@@ -202,69 +166,64 @@ namespace ChatServer
             Storage.Users.FirstOrDefault(
                 x => x.userId == userId);
 
-
             if (user == null)
+            {
                 return;
-
-
-
-
+            }    
 
             Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName.Equals(channelName));
             if (channel == null)
             {
-
                 return;
             }
+
             channel.messages.Add(new Message
             {
                 sender = userId,
                 text = message,
                 time = DateTime.Now
             });
-
         }
 
-
+        //get private chat between 2 users
         public List<Message> GetPrivateMessages(string senderId, string recipientId)
         {
             PrivateChat privateChat =
                   Storage.PrivateChats.FirstOrDefault(x => (x.userId1 == senderId && x.userId2 == recipientId) || (x.userId1 == recipientId && x.userId2 == senderId));
+            
             if (privateChat == null)
             {
                 return new List<Message>();
             }
+
             return privateChat.messages.OrderBy(x => x.time).ToList();
         }
+
+        //send private msg to another user
         public void SendPrivateMessage(
             string senderId,
             string recipientId,
             string message)
         {
-
             User sender =
             Storage.Users.FirstOrDefault(
                 x => x.userId == senderId);
-
 
             User receiver =
             Storage.Users.FirstOrDefault(
                 x => x.userId == recipientId);
 
-
-
             if (sender == null || receiver == null)
+            {
                 return;
+            }
 
-
-
+            //only allow private msg in same channel
             if (sender.currentChannel !=
                receiver.currentChannel)
             {
                 return;
             }
-
-
 
             PrivateChat privateChat =
                   Storage.PrivateChats.FirstOrDefault(x => (x.userId1 == senderId && x.userId2 == recipientId) || (x.userId1 == recipientId && x.userId2 == senderId));
@@ -288,7 +247,6 @@ namespace ChatServer
             };
             privateChat.messages.Add(newMessage);
 
-
             Storage.Notifications.Add(new Notification(recipientId, senderId, newMessage, false));
         }
 
@@ -300,36 +258,38 @@ namespace ChatServer
             }
         }
 
+        //get channel info to user
         public Channel GetChannel(string channelName, string userId)
         {
             lock (Storage.LockObject)
             {
                 Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName == channelName);
 
-
-
                 if (channel == null)
+                {
                     return null;
+                }
 
                 User user = Storage.Users.FirstOrDefault(x => x.userId == userId);
 
-
-
-                if (user == null) return null;
-
+                if (user == null) 
+                {
+                    return null;
+                }
 
                 Channel result = new Channel
                 {
                     channelName = channel.channelName,
                     members = new List<string>(channel.members),
                     files = new List<SharedFile>(channel.files),
+                    //only show messages from when the user join
                     messages = channel.messages.Where(x => x.time >= user.joinedChannelAt).ToList()
-
                 };
 
                 return result;
             }
         }
+
         public void MarkNotificationAsRead(Notification n)
         {
             string recipient = n.recipient;
@@ -346,6 +306,7 @@ namespace ChatServer
                 }
             }
         }
+
         //public void MarkNotificationAsRead(Notification notification)
         //{
         //    lock (Storage.LockObject)
@@ -360,18 +321,17 @@ namespace ChatServer
         //    }
         //}
         
-
         public SharedFile ShareFile(
             string userId,
             string fileName,
             byte[] data,
             string channelName)
         {
-
             if (data.Length > 2 * 1024 * 1024)
                 return null;
 
             Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName.Equals(channelName));
+            
             if (channel == null)
             {
                 return null;
@@ -388,9 +348,6 @@ namespace ChatServer
             channel.files.Add(file);
 
             return file;
-
         }
-
-
     }
 }

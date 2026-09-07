@@ -8,14 +8,11 @@ namespace Chat
         public string text { get; set; }
         public DateTime time { get; set; }
 
-
-
         public Message()
         {
             sender = "";
             text = "";
             time = DateTime.Now;
-
         }
     }
 }

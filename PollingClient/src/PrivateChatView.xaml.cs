@@ -24,7 +24,6 @@ namespace PollingClient.src
             RecipientText.Text = recipient;
 
             StartPolling();
-
         }
 
         //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
@@ -54,8 +53,6 @@ namespace PollingClient.src
                 task.Start();
                 List<Message> message = await task;
                 PrivateMessageList.ItemsSource = message;
-
-
             }
             catch (Exception ex)
             {
@@ -91,9 +88,6 @@ namespace PollingClient.src
         {
             cancellationTokenSource.Cancel();
             Close();
-
         }
-
-
     }
 }

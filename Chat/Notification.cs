@@ -11,6 +11,7 @@
         {
 
         }
+        
         public Notification(string recipient, string sender, Message message, bool read)
         {
             this.recipient = recipient;

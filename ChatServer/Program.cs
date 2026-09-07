@@ -15,8 +15,6 @@ namespace ChatServer
                 new Uri(
                 "net.tcp://localhost:9000/Chat"));
 
-
-
             host.AddServiceEndpoint(
                 typeof(ChatContract.IChatService),
                 new NetTcpBinding(),
@@ -27,20 +25,14 @@ namespace ChatServer
                 new NetTcpBinding(),
                 "Polling");
 
-
-
             host.Open();
-
 
             Console.WriteLine(
                 "Chat Server Running");
 
-
             Console.ReadLine();
 
-
             host.Close();
-
         }
     }
 }

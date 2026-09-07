@@ -25,7 +25,6 @@ namespace PollingClient.src
             StartPolling();
         }
 
-
         //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
         public async void StartPolling()
         {
@@ -44,25 +43,23 @@ namespace PollingClient.src
             {
             }
         }
+
         public async Task LoadChannels()
         {
             try
             {
-
-
                 Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
                 task.Start();
                 List<Channel> channels = await task;
 
                 ChannelList.ItemsSource = channels;
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
             }
         }
+
         private void Join_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -73,8 +70,6 @@ namespace PollingClient.src
                 foob.JoinChannel(userId, channel.channelName);
                 NavigationService.Navigate(
                     new ChannelView(userId, channel.channelName, foob));
-
-
             }
             catch (Exception ex)
             {
@@ -83,13 +78,10 @@ namespace PollingClient.src
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-
             }
-
         }
 
         private async void CreateChannel_Click(object sender, RoutedEventArgs e)
-
         {
             string channelName = ChannelNameTextBox.Text.Trim();
             ChannelNameTextBox.Text = channelName;
@@ -118,7 +110,6 @@ namespace PollingClient.src
                 }
                 ChannelNameTextBox.Clear();
 
-
                 LoadChannels();
             }
             catch (Exception ex)
@@ -138,7 +129,6 @@ namespace PollingClient.src
             {
                 foob.SignOut(userId);
                 NavigationService.Navigate(new LoginView(foob));
-
             }
             catch (Exception ex)
             {
@@ -150,6 +140,4 @@ namespace PollingClient.src
             }
         }
     }
-
-
 }

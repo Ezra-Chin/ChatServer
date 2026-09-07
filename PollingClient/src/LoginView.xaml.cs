@@ -7,6 +7,7 @@ namespace PollingClient.src
     public partial class LoginView : Page
     {
         ChatContract.IPollingChatService foob;
+        
         public LoginView(ChatContract.IPollingChatService chatContract)
         {
             InitializeComponent();
@@ -22,7 +23,6 @@ namespace PollingClient.src
                 MessageBox.Show("Please enter a valid user ID.");
                 return;
             }
-
 
             try
             {
@@ -40,8 +40,6 @@ namespace PollingClient.src
             {
                 MessageBox.Show(ex.ToString(), "An error occurred while signing in."); return;
             }
-
-
         }
     }
 }

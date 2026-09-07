@@ -14,7 +14,6 @@ namespace PollingClient
         {
             InitializeComponent();
 
-
             NetTcpBinding tcp = new NetTcpBinding();
 
             //REMINDER TO CHANGE THIS DURING PROD 

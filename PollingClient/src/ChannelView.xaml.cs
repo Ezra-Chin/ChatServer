@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-
-
 namespace PollingClient.src
 {
     public partial class ChannelView : Page
@@ -28,8 +26,8 @@ namespace PollingClient.src
             this.foob = foob;
             ChannelNameText.Text = channelName;
             StartPolling();
-
         }
+
         //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
         public async void StartPolling()
         {
@@ -49,6 +47,7 @@ namespace PollingClient.src
             {
             }
         }
+
         private async Task LoadNotifications()
         {
             try
@@ -71,13 +70,10 @@ namespace PollingClient.src
                     if (open == false)
                     {
                         OpenPrivateChat(notification.sender);
-
                     }
                     Task taskb = new Task(() => foob.MarkNotificationAsRead(notification));
                     taskb.Start();
                     await taskb;
-
-
                 }
             }
             catch (Exception ex)
@@ -85,6 +81,7 @@ namespace PollingClient.src
                 MessageBox.Show("Unable to Load Notifications");
             }
         }
+
         private async Task LoadChannel()
         {
             try
@@ -98,6 +95,7 @@ namespace PollingClient.src
                     MessageBox.Show("Channel not found", "Channel not found", MessageBoxButton.OK);
                     NavigationService.GoBack();
                 }
+
                 MessageList.ItemsSource = channel.messages;
                 MemberList.ItemsSource = channel.members;
                 FileList.ItemsSource = channel.files;
@@ -112,6 +110,7 @@ namespace PollingClient.src
         private async void Send_Click(object sender, RoutedEventArgs e)
         {
             string message = MessageTextBox.Text.Trim();
+
             if (string.IsNullOrEmpty(message))
             {
                 return;
@@ -150,7 +149,9 @@ namespace PollingClient.src
         private void Member_Selected(object sender, SelectionChangedEventArgs e)
         {
             if (MemberList.SelectedItem == null)
+            {
                 return;
+            }
 
             string selectedUser = MemberList.SelectedItem as string;
 
@@ -160,10 +161,9 @@ namespace PollingClient.src
             }
             OpenPrivateChat(selectedUser);
 
-
-
             MemberList.SelectedItem = null;
         }
+
         private void OpenPrivateChat(string recipient)
         {
             foreach (PrivateChatView window in privateWindows)
@@ -177,7 +177,6 @@ namespace PollingClient.src
 
             PrivateChatView newWindow = new PrivateChatView(foob, userId, recipient);
 
-
             privateWindows.Add(newWindow);
 
             newWindow.Closed += (s, e) =>
@@ -187,6 +186,7 @@ namespace PollingClient.src
 
             newWindow.Show();
         }
+
         private void FileList_DoubleClick(object sender, RoutedEventArgs e)
         {
             if (FileList.SelectedItem == null)
@@ -201,8 +201,9 @@ namespace PollingClient.src
             dialog.FileName = file.fileName;
 
             if (dialog.ShowDialog() != true)
+            {
                 return;
-
+            }
 
             try
             {
@@ -216,6 +217,7 @@ namespace PollingClient.src
                    MessageBoxButton.OK);
             }
         }
+
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
@@ -225,14 +227,13 @@ namespace PollingClient.src
             }
             try
             {
-
-
                 byte[] data = File.ReadAllBytes(dialog.FileName);
                 if (data.Length > 2 * 1024 * 1024)
                 {
                     MessageBox.Show("File size exceeds 2MB", "File Size Exceeded", MessageBoxButton.OK);
                     return;
                 }
+
                 string fileName = Path.GetFileName(dialog.FileName);
                 string extension = Path.GetExtension(fileName);
 
@@ -242,7 +243,6 @@ namespace PollingClient.src
                     MessageBox.Show("File type is not supported");
                     return;
                 }
-
 
                 Task<SharedFile> task = new Task<SharedFile>(() => foob.ShareFile(userId, fileName, data, channelName));
                 task.Start();
@@ -266,6 +266,5 @@ namespace PollingClient.src
                      MessageBoxButton.OK);
             }
         }
-
     }
 }

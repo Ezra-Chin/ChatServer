@@ -12,37 +12,30 @@ namespace ChatContract
         [OperationContract]
         bool SignIn(string userId);
 
-
         [OperationContract]
         void SignOut(string userId);
 
-
         [OperationContract]
         List<Channel> GetChannels();
-
 
         [OperationContract]
         bool CreateChannel(
             string userId,
             string channelName);
 
-
         [OperationContract]
         void JoinChannel(
             string userId,
             string channelName);
 
-
         [OperationContract]
         void LeaveChannel(
             string userId);
-
 
         [OperationContract]
         void SendMessage(
             string userId, string channelName,
             string message);
-
 
         [OperationContract]
         List<Message> GetPrivateMessages(
