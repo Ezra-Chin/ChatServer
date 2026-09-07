@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Chat
+﻿namespace Chat
 {
     public class Notification
     {
-        public string recipient { set; get;  }
+        public string recipient { set; get; }
         public string sender { set; get; }
         public Message message { set; get; }
         public bool read { get; set; }

@@ -1,0 +1,203 @@
+<Page x:Class="DuplexClient.src.ChannelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+
+    <Grid Background="White">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
+        </Grid.ColumnDefinitions>
+
+
+
+        <Border Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Background="White"
+                BorderBrush="#E5E5E5"
+                BorderThickness="0,0,0,1">
+
+            <Grid Margin="25,0">
+
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Text="# "
+                               FontSize="22"
+                               Foreground="#777777"/>
+
+                    <TextBlock x:Name="ChannelNameText"
+                               Text="Channel"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="#222222"/>
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+
+                    <Button Content="Leave"
+                            Width="80"
+                            Height="32"
+                            Margin="0,0,10,0"
+                            Click="Leave_Click"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+
+
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Background="White"
+                Padding="20">
+
+            <ListBox x:Name="MessageList"
+                     Background="White"
+                     BorderThickness="0">
+
+                <ListBox.ItemTemplate>
+
+                    <DataTemplate>
+
+                        <StackPanel Margin="0,0,0,12">
+
+                            <TextBlock Text="{Binding sender}"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       Foreground="#333333"/>
+
+                            <TextBlock Text="{Binding text}"
+                                       FontSize="15"
+                                       Foreground="#555555"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding time}"
+                                       FontSize="11"
+                                       Foreground="#999999"/>
+
+                        </StackPanel>
+
+                    </DataTemplate>
+
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Background="#FAFAFA"
+                BorderBrush="#E5E5E5"
+                BorderThickness="1,0,0,0"
+                Padding="20">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+
+
+                <StackPanel Grid.Row="0">
+
+                    <TextBlock Text="Members"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#222222"
+                               Margin="0,0,0,10"/>
+
+                    <ListBox x:Name="MemberList"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             SelectionChanged="Member_Selected">
+
+                    </ListBox>
+
+                </StackPanel>
+
+
+
+                <StackPanel Grid.Row="1">
+
+                    <TextBlock Text="Shared Files"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#222222"
+                               Margin="0,0,0,10"/>
+
+                    <ListBox x:Name="FileList"
+                             MouseDoubleClick="FileList_DoubleClick"
+                             Background="Transparent"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Run Text="{Binding fileName}"/>
+                                    <Run Text=" (Sent by "/>
+                                    <Run Text="{Binding sharedBy}"/>
+                                    <Run Text=")"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Content="Share File"
+                            Height="35"
+                            Margin="0,15,0,0"
+                            Click="ShareFile_Click"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+
+
+        <Border Grid.Row="2"
+                Grid.Column="0"
+                Background="White"
+                BorderBrush="#E5E5E5"
+                BorderThickness="0,1,0,0"
+                Padding="15">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="MessageTextBox"
+                         Height="38"
+                         FontSize="14"
+                         Padding="10"
+                         VerticalContentAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="Send"
+                        Height="38"
+                        Margin="10,0,0,0"
+                        Click="Send_Click"/>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</Page>

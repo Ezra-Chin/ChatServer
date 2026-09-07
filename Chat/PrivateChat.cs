@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Chat
 {
@@ -13,6 +9,6 @@ namespace Chat
 
 
         public List<Message> messages { get; set; } = new List<Message>();
-  
+
     }
 }

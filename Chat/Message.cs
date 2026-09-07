@@ -1,25 +1,21 @@
-﻿    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+﻿using System;
 
-    namespace Chat
+namespace Chat
+{
+    public class Message
     {
-        public class Message
-        {
-            public string sender { get; set; }   
-            public string text { get; set; }
-            public DateTime time { get; set; }
- 
+        public string sender { get; set; }
+        public string text { get; set; }
+        public DateTime time { get; set; }
+
 
 
         public Message()
-            {
-                sender = "";
-                text = "";
-                time = DateTime.Now;
-                
-            }
+        {
+            sender = "";
+            text = "";
+            time = DateTime.Now;
+
         }
     }
+}

@@ -1,21 +1,22 @@
 ﻿using Chat;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 
-namespace PollingClient.src
+namespace DuplexClient.src
 {
     public partial class PrivateChatView : Window
     {
-        ChatContract.IPollingChatService foob;
+        ChatContract.IChatService foob;
         private string sender;
         public string recipient { get; }
         private CancellationTokenSource cancellationTokenSource;
 
-        public PrivateChatView(ChatContract.IPollingChatService chatContract, string sender, string recipient)
+        public PrivateChatView(ChatContract.IChatService chatContract, string sender, string recipient)
         {
             InitializeComponent();
             foob = chatContract;

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Chat;
 using System.Collections.Generic;
 using System.ServiceModel;
-using Chat;
 
 namespace ChatContract
 {
     [ServiceContract]
-    
+
     public interface IPollingChatService
     {
 

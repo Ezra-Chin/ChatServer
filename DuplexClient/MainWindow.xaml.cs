@@ -1,28 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ChatContract;
+using DuplexClient.src;
+using System;
+using System.ServiceModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DuplexClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    public delegate void CreateChannel();
+
     public partial class MainWindow : Window
     {
+        private IChatService foob;
+        private IChatCallback foobCallback;
+        private CreateChannel createChannel;
+        IAsyncResult asyncResult;
+        private DuplexChannelFactory<ChatContract.IChatService> factory;
+
+        //private ChatCallbackImpl callback;
+
+        //private ProcessLongTask longTask;
+
+
         public MainWindow()
         {
+
             InitializeComponent();
+            DuplexChannelFactory<IChatService> foobFactory;
+            NetTcpBinding tcp = new NetTcpBinding();
+
+            //REMINDER TO CHANGE THIS DURING PROD 
+            string URL = "net.tcp://localhost:9000/Chat/Duplex";
+            //foobCallback = new ChatCallbackImpl(this);
+            foobFactory = new DuplexChannelFactory<IChatService>(foobCallback, tcp, URL);
+
+            foob = foobFactory.CreateChannel();
+
+            MainFrame.Navigate(new src.LoginView(foob));
         }
     }
 }

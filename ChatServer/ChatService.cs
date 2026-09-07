@@ -1,16 +1,27 @@
-﻿using System;
+﻿using Chat;
+using ChatContract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using Chat;
-using ChatContract;
+using System.ServiceModel;
 
 namespace ChatServer
 {
-    public class ChatService : IChatService , IPollingChatService
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
+    public class ChatService : IChatService, IPollingChatService
     {
 
+        //private static List<IChatCallback> clients = new List<IChatCallback>();
+        //private static readonly object clientsLock = new object();
 
+        //public ChatService()
+        //{
+        //    IChatCallback callback = OperationContext.Current.GetCallbackChannel<IChatCallback>();
+        //    lock (clientsLock)
+        //    {
+        //        clients.Add(callback);
+        //    }
+        //}
         public bool SignIn(string userId)
         {
 
@@ -92,6 +103,20 @@ namespace ChatServer
                     });
 
             }
+
+            OperationContext.Current.GetCallbackChannel<IChatCallback>().ChannelListUpdate();
+
+            //foreach (IChatCallback client in clients)
+            //{
+            //    try
+            //    {
+            //        client.ChannelListUpdate();
+            //    }
+            //    catch(Exception ex)
+            //    {
+                    
+            //    }
+            //}
             return true;
 
         }
@@ -188,7 +213,7 @@ namespace ChatServer
             Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName.Equals(channelName));
             if (channel == null)
             {
-         
+
                 return;
             }
             channel.messages.Add(new Message
@@ -197,7 +222,7 @@ namespace ChatServer
                 text = message,
                 time = DateTime.Now
             });
-          
+
         }
 
 
@@ -209,7 +234,7 @@ namespace ChatServer
             {
                 return new List<Message>();
             }
-            return privateChat.messages.OrderBy( x => x.time).ToList();
+            return privateChat.messages.OrderBy(x => x.time).ToList();
         }
         public void SendPrivateMessage(
             string senderId,
@@ -262,7 +287,7 @@ namespace ChatServer
                 time = DateTime.Now,
             };
             privateChat.messages.Add(newMessage);
-               
+
 
             Storage.Notifications.Add(new Notification(recipientId, senderId, newMessage, false));
         }
@@ -334,7 +359,7 @@ namespace ChatServer
         //        }
         //    }
         //}
-
+        
 
         public SharedFile ShareFile(
             string userId,

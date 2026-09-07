@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,17 +11,17 @@ using System.Windows.Controls;
 
 
 
-namespace PollingClient.src
+namespace DuplexClient.src
 {
     public partial class ChannelView : Page
     {
-        private ChatContract.IPollingChatService foob;
+        private ChatContract.IChatService foob;
         private string userId;
         private string channelName;
         private CancellationTokenSource cancellationTokenSource;
         private List<PrivateChatView> privateWindows = new List<PrivateChatView>();
 
-        public ChannelView(string userId, string channelName, ChatContract.IPollingChatService foob)
+        public ChannelView(string userId, string channelName, ChatContract.IChatService foob)
         {
             InitializeComponent();
             this.userId = userId;

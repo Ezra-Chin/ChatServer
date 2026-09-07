@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Chat
+﻿namespace Chat
 {
     public class SharedFile
     {
@@ -15,10 +9,10 @@ namespace Chat
 
         public SharedFile()
         {
-            
+
             sharedBy = "";
             data = null;
-         
+
         }
     }
 }

@@ -1,49 +1,40 @@
 ﻿using Chat;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Channels;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
 
-namespace PollingClient.src
+namespace DuplexClient.src
 {
 
     public partial class ChannelListPage : Page
     {
-        private ChatContract.IPollingChatService foob;
+        private ChatContract.IChatService foob;
         private string userId;
         private CancellationTokenSource cancellationTokenSource;
 
-        public ChannelListPage(string id, ChatContract.IPollingChatService chatContract)
+        public ChannelListPage(string id, ChatContract.IChatService chatContract)
         {
             InitializeComponent();
             foob = chatContract;
             userId = id;
             WelcomeText.Text = $"Welcome, {id}!";
-            StartPolling();
+            LoadChannels();
         }
+      
 
-
-        //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
-        public async void StartPolling()
+        public void ChannelListUpdate()
         {
-            cancellationTokenSource = new CancellationTokenSource();
-
-            try
+            Dispatcher.Invoke(() =>
             {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    await LoadChannels();
-
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationTokenSource.Token);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                LoadChannels();
+            });
         }
+
         public async Task LoadChannels()
         {
             try

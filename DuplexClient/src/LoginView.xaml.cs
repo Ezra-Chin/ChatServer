@@ -2,12 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PollingClient.src
+namespace DuplexClient.src
 {
     public partial class LoginView : Page
     {
-        ChatContract.IPollingChatService foob;
-        public LoginView(ChatContract.IPollingChatService chatContract)
+        ChatContract.IChatService foob;
+        public LoginView(ChatContract.IChatService chatContract)
         {
             InitializeComponent();
             foob = chatContract;
