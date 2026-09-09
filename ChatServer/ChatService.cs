@@ -23,9 +23,31 @@ namespace ChatServer
         //    }
         //}
 
+        private static List<IChatCallback> clients = new List<IChatCallback>();
+        private static readonly object clientsLock = new object();
+
+        //Just to catch polling request and set its IChatCallback as null
+        private static IChatCallback TryGetCallback()
+        {
+            OperationContext context = OperationContext.Current;
+          
+
+            try
+            {
+                return context.GetCallbackChannel<IChatCallback>();
+            }
+            catch (InvalidCastException) { 
+                return null;
+            }   
+            catch (InvalidOperationException) {
+                return null; 
+            }
+        } 
+
         //sign in to chat server
         public bool SignIn(string userId)
         {
+
             lock (Storage.LockObject)
             {
                 //prevent duplicate user session
@@ -40,6 +62,12 @@ namespace ChatServer
                     {
                         userId = userId
                     });
+            }
+            IChatCallback callback = TryGetCallback();
+            if (callback == null) return true ; 
+            lock (clientsLock)
+            {
+                clients.Add(callback);
             }
             return true;
         }
@@ -58,6 +86,12 @@ namespace ChatServer
                     LeaveChannel(userId);
                     Storage.Users.Remove(user);
                 }
+            }
+            IChatCallback callback = TryGetCallback();
+            if (callback == null) return;
+            lock (clientsLock)
+            {
+                clients.Remove(OperationContext.Current.GetCallbackChannel<IChatCallback>());
             }
         }
 
@@ -87,7 +121,26 @@ namespace ChatServer
                     });
             }
 
-            OperationContext.Current.GetCallbackChannel<IChatCallback>().ChannelListUpdate();
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
+
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.ChannelListUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
+            }
 
             //foreach (IChatCallback client in clients)
             //{
@@ -97,7 +150,7 @@ namespace ChatServer
             //    }
             //    catch(Exception ex)
             //    {
-                    
+
             //    }
             //}
             return true;
@@ -135,6 +188,27 @@ namespace ChatServer
 
                 user.joinedChannelAt = DateTime.Now;
             }
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
+
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.ChannelViewUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
+            }
+
         }
 
         //rmv user from their curr channel
@@ -153,6 +227,26 @@ namespace ChatServer
             if (user != null)
             {
                 user.currentChannel = null;
+            }
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
+
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.ChannelViewUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
             }
         }
 
@@ -183,6 +277,28 @@ namespace ChatServer
                 text = message,
                 time = DateTime.Now
             });
+
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
+
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.ChannelViewUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
+            }
+
         }
 
         //get private chat between 2 users
@@ -248,6 +364,27 @@ namespace ChatServer
             privateChat.messages.Add(newMessage);
 
             Storage.Notifications.Add(new Notification(recipientId, senderId, newMessage, false));
+
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
+
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.PrivateChatViewUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
+            }
         }
 
         public List<Notification> GetNotifications(string userId)
@@ -256,6 +393,7 @@ namespace ChatServer
             {
                 return Storage.Notifications.Where(x => x.recipient == userId && !x.read).ToList();
             }
+
         }
 
         //get channel info to user
@@ -305,6 +443,7 @@ namespace ChatServer
                     }
                 }
             }
+
         }
 
         //public void MarkNotificationAsRead(Notification notification)
@@ -346,7 +485,26 @@ namespace ChatServer
             };
 
             channel.files.Add(file);
+            List<IChatCallback> snapshot;
+            lock (clientsLock)
+            {
+                snapshot = new List<IChatCallback>(clients);
+            }
 
+            foreach (IChatCallback client in snapshot)
+            {
+                try
+                {
+                    client.ChannelViewUpdate();
+                }
+                catch (Exception)
+                {
+                    lock (clientsLock)
+                    {
+                        clients.Remove(client);
+                    }
+                }
+            }
             return file;
         }
     }

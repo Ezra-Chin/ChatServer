@@ -15,39 +15,31 @@ namespace DuplexClient.src
         private string sender;
         public string recipient { get; }
         private CancellationTokenSource cancellationTokenSource;
-
-        public PrivateChatView(ChatContract.IChatService chatContract, string sender, string recipient)
+        private ChatCallbackImpl callback;
+        public PrivateChatView(ChatContract.IChatService chatContract, string sender, string recipient, ChatCallbackImpl callback)
         {
             InitializeComponent();
             foob = chatContract;
             this.sender = sender;
             this.recipient = recipient;
+            this.callback = callback;
+            callback.privateChatView = this;
             RecipientText.Text = recipient;
 
-            StartPolling();
-
+            LoadChat();
         }
 
-        //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
-        public async void StartPolling()
+      
+
+        public void PrivateChatViewUpdate()
         {
-            cancellationTokenSource = new CancellationTokenSource();
-
-            try
+            Dispatcher.Invoke(() =>
             {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    await LoadChat();
-
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationTokenSource.Token);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                LoadChat();
+            });
         }
 
-        private async Task LoadChat()
+        private async void LoadChat()
         {
             try
             {
@@ -79,7 +71,7 @@ namespace DuplexClient.src
                 await task;
 
                 PrivateMessageTextBox.Clear();
-                await LoadChat();
+                LoadChat();
             }
             catch (Exception ex)
             {

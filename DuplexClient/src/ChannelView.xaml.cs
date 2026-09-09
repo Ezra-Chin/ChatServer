@@ -18,39 +18,33 @@ namespace DuplexClient.src
         private string channelName;
         private CancellationTokenSource cancellationTokenSource;
         private List<PrivateChatView> privateWindows = new List<PrivateChatView>();
+        private ChatCallbackImpl callback;
 
-        public ChannelView(string userId, string channelName, ChatContract.IChatService foob)
+        public ChannelView(string userId, string channelName, ChatContract.IChatService foob, ChatCallbackImpl callback)
         {
             InitializeComponent();
             this.userId = userId;
             this.channelName = channelName;
             this.foob = foob;
+            this.callback = callback;
+            callback.channelView = this;
             ChannelNameText.Text = channelName;
-            StartPolling();
+            LoadChannel();
+            LoadNotifications();
         }
 
-        //refresh channel data and notification
-        //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
-        public async void StartPolling()
+    
+
+        public void ChannelViewUpdate()
         {
-            cancellationTokenSource = new CancellationTokenSource();
-
-            try
+            Dispatcher.Invoke(() =>
             {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    await LoadChannel();
-                    await LoadNotifications();
-
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationTokenSource.Token);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                LoadChannel();
+                LoadNotifications();
+            });
         }
 
-        private async Task LoadNotifications()
+        private async void LoadNotifications()
         {
             try
             {
@@ -86,7 +80,7 @@ namespace DuplexClient.src
             }
         }
 
-        private async Task LoadChannel()
+        private async void LoadChannel()
         {
             try
             {
@@ -127,7 +121,7 @@ namespace DuplexClient.src
                 MessageTextBox.Clear();
 
                 await task;
-                await LoadChannel();
+                LoadChannel();
             }
             catch (Exception ex)
             {
@@ -183,7 +177,7 @@ namespace DuplexClient.src
                 }
             }
 
-            PrivateChatView newWindow = new PrivateChatView(foob, userId, recipient);
+            PrivateChatView newWindow = new PrivateChatView(foob, userId, recipient, callback);
 
             privateWindows.Add(newWindow);
 
@@ -225,7 +219,7 @@ namespace DuplexClient.src
                    MessageBoxButton.OK);
             }
         }
-
+       
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
@@ -266,7 +260,7 @@ namespace DuplexClient.src
                        MessageBoxButton.OK);
                     return;
                 }
-                await LoadChannel();
+                LoadChannel();
             }
             catch (Exception ex)
             {

@@ -6,6 +6,9 @@ namespace ChatContract
     {
         [OperationContract(IsOneWay = true)]
         void ChannelListUpdate();
+        void ChannelViewUpdate();
+
+        void PrivateChatViewUpdate();
 
 
 
