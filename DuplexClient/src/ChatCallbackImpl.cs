@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ServiceModel;
 using ChatContract;
 using System.Windows.Controls;
+using Chat;
 
 
 namespace DuplexClient.src
@@ -17,13 +18,34 @@ namespace DuplexClient.src
 
         //test
         private ChannelListPage channelListPage;
-        public ChatCallbackImpl (ChannelListPage channelListPage)
+        private ChannelView channelView;
+        public void SetChannelListPage(ChannelListPage page)
         {
-            this.channelListPage = channelListPage;
+            channelListPage = page;
         }
-        public void ChannelListUpdate()
+        public void SetChannelView(ChannelView page)
         {
-            channelListPage.ChannelListUpdate();
+            channelView = page;
+        }
+        public void ClearChannelView()
+        {
+            channelView = null;
+        }
+        public void ChannelListUpdate(System.Collections.Generic.List<Channel> channels)
+        {
+            channelListPage?.ChannelListUpdate(channels);
+        }
+        public void ChannelUpdate(Channel channel)
+        {
+            channelView?.ChannelUpdate(channel);
+        }
+        private void PrivateMessageUpdate(Message message)
+        {
+            channelView?.PrivateMessageUpdate(message);
+        }
+        private void FileUpdate(SharedFile file)
+        {
+            channelView?.FileUpdate(file);
         }
 
         //public ChatCallbackImpl(ChannelListPage page)

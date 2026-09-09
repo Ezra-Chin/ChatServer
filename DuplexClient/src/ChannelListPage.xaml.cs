@@ -15,39 +15,74 @@ namespace DuplexClient.src
     {
         private ChatContract.IChatService foob;
         private string userId;
-        private CancellationTokenSource cancellationTokenSource;
 
-        public ChannelListPage(string id, ChatContract.IChatService chatContract)
+        //test rmv if fails
+        private ChatCallbackImpl callback;
+        public ChannelListPage(string id, ChatContract.IChatService chatContract, ChatCallbackImpl callback)
         {
             InitializeComponent();
             foob = chatContract;
             userId = id;
+            this.callback = callback;
             WelcomeText.Text = $"Welcome, {id}!";
+            //tell obj that this is the active channel page
+            callback.SetChannelListPage(this);
             LoadChannels();
         }
-      
-        public void ChannelListUpdate()
+
+
+        //test uncomment if fails
+        //public ChannelListPage(string id, ChatContract.IChatService chatContract)
+        //{
+        //    InitializeComponent();
+        //    foob = chatContract;
+        //    userId = id;
+        //    WelcomeText.Text = $"Welcome, {id}!";
+        //    LoadChannels();
+        //}
+
+        //test uncomment if fails
+        //public void ChannelListUpdate()
+        //{
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        LoadChannels();
+        //    });
+        //}
+
+        //test remove if fails
+        public void ChannelListUpdate(List<Channel> channels)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                LoadChannels();
-            });
+                ChannelList.ItemsSource = channels;
+            }));
         }
 
         public async Task LoadChannels()
         {
             try
             {
-                Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
-                task.Start();
-                List<Channel> channels = await task;
-
+                //test rmv if fails
+                List<Channel> channels = await Task.Run(() => foob.GetChannels());
                 ChannelList.ItemsSource = channels;
+
+
+                //uncomment if fails
+                //Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
+                //task.Start();
+                //List<Channel> channels = await task;
+
+                //ChannelList.ItemsSource = channels;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                MessageBox.Show(
+                    "An error occurred while loading channels.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -89,9 +124,15 @@ namespace DuplexClient.src
             }
             try
             {
-                Task<Boolean> task = new Task<Boolean>(() => foob.CreateChannel(userId, channelName));
-                task.Start();
-                Boolean res = await task;
+                //rmv if fails
+                bool res = await Task.Run(() => foob.CreateChannel(userId, channelName));
+
+
+                //uncomment if fails
+                //Task<Boolean> task = new Task<Boolean>(() => foob.CreateChannel(userId, channelName));
+                //task.Start();
+                //Boolean res = await task;
+
                 if (!res)
                 {
                     MessageBox.Show(
@@ -99,10 +140,14 @@ namespace DuplexClient.src
                    "Channel Already Created",
                    MessageBoxButton.OK,
                    MessageBoxImage.Warning);
-                }
-                ChannelNameTextBox.Clear();
 
-                LoadChannels();
+                    //test rmv if fails
+                    return;
+                }
+
+                //uncomment if fails
+                ChannelNameTextBox.Clear();
+                //LoadChannels();
             }
             catch (Exception ex)
             {
@@ -120,7 +165,11 @@ namespace DuplexClient.src
             try
             {
                 foob.SignOut(userId);
-                NavigationService.Navigate(new LoginView(foob));
+                //uncomment if fails
+                //NavigationService.Navigate(new LoginView(foob));
+
+                //test rmv if fails
+                NavigationService.Navigate(new LoginView(foob, callback));
             }
             catch (Exception ex)
             {

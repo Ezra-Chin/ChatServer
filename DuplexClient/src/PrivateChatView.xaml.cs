@@ -14,7 +14,6 @@ namespace DuplexClient.src
         ChatContract.IChatService foob;
         private string sender;
         public string recipient { get; }
-        private CancellationTokenSource cancellationTokenSource;
 
         public PrivateChatView(ChatContract.IChatService chatContract, string sender, string recipient)
         {
@@ -24,37 +23,25 @@ namespace DuplexClient.src
             this.recipient = recipient;
             RecipientText.Text = recipient;
 
-            StartPolling();
+            //test rmv if fails
+            LoadChat();
 
-        }
+            //StartPolling();
 
-        //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
-        public async void StartPolling()
-        {
-            cancellationTokenSource = new CancellationTokenSource();
-
-            try
-            {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    await LoadChat();
-
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationTokenSource.Token);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-            }
         }
 
         private async Task LoadChat()
         {
             try
             {
-                Task<List<Message>> task = new Task<List<Message>>(() => foob.GetPrivateMessages(sender, recipient));
-                task.Start();
-                List<Message> message = await task;
-                PrivateMessageList.ItemsSource = message;
+                //test rmv if fails
+                List<Message> messages = await Task.Run(() => foob.GetPrivateMessages(sender, recipient));
+
+                //uncomment if fails
+                //Task<List<Message>> task = new Task<List<Message>>(() => foob.GetPrivateMessages(sender, recipient));
+                //task.Start();
+                //List<Message> message = await task;
+                PrivateMessageList.ItemsSource = messages;
 
 
             }
@@ -62,6 +49,28 @@ namespace DuplexClient.src
             {
                 MessageBox.Show("Unable to load chat", "Unable to Load Chat", MessageBoxButton.OK);
             }
+        }
+
+        //rmv if fails
+        public void AddMessage(Message message)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                List<Message> messages = PrivateMessageList.ItemsSource as List<Message>;
+                if (messages == null)
+                {
+                    messages = new List<Message>();
+                }
+                else
+                {
+                    messages = new List<Message>(messages);
+                }
+                messages.Add(message);
+
+                messages.Sort((a, b) => a.time.CompareTo(b.time));
+            
+                PrivateMessageList.ItemsSource = messages;
+            }));
         }
 
         private async void Send_Click(object sender, RoutedEventArgs e)
@@ -74,12 +83,20 @@ namespace DuplexClient.src
             }
             try
             {
-                Task task = new Task(() => foob.SendPrivateMessage(this.sender, this.recipient, message));
-                task.Start();
-                await task;
-
+                //rmv if fails
                 PrivateMessageTextBox.Clear();
-                await LoadChat();
+                await Task.Run(() => foob.SendPrivateMessage(
+                    this.sender,
+                    this.recipient,
+                    message));
+
+                //uncomment if fails
+                //Task task = new Task(() => foob.SendPrivateMessage(this.sender, this.recipient, message));
+                //task.Start();
+                //await task;
+
+                //PrivateMessageTextBox.Clear();
+                //await LoadChat();
             }
             catch (Exception ex)
             {
@@ -90,7 +107,7 @@ namespace DuplexClient.src
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            cancellationTokenSource.Cancel();
+            //cancellationTokenSource.Cancel();
             Close();
 
         }

@@ -16,39 +16,91 @@ namespace DuplexClient.src
         private ChatContract.IChatService foob;
         private string userId;
         private string channelName;
-        private CancellationTokenSource cancellationTokenSource;
         private List<PrivateChatView> privateWindows = new List<PrivateChatView>();
 
-        public ChannelView(string userId, string channelName, ChatContract.IChatService foob)
+        //test rmv if fails
+        private ChatCallbackImpl callback;
+        public ChannelView(string userId, string channelName, ChatContract.IChatService foob, ChatCallbackImpl callback)
         {
             InitializeComponent();
             this.userId = userId;
             this.channelName = channelName;
             this.foob = foob;
+            this.callback = callback;
             ChannelNameText.Text = channelName;
-            StartPolling();
-        }
+            
+            //tell callback obj that thisis now the active channel
+            callback.SetChannelView(this);
 
-        //refresh channel data and notification
-        //Source: https://stackoverflow.com/questions/23340894/polling-the-right-way
-        public async void StartPolling()
+            LoadChannel();
+        }
+        public void ChannelUpdate(Channel channel)
         {
-            cancellationTokenSource = new CancellationTokenSource();
-
-            try
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
+                if(channel == null)
                 {
-                    await LoadChannel();
-                    await LoadNotifications();
-
-                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationTokenSource.Token);
+                    return;
                 }
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                if(channel.channelName != channelName)
+                {
+                    return;
+                }
+                MessageList.ItemsSource = new List<Message>(channel.messages);
+                MemberList.ItemsSource = new List<string>(channel.members);
+                FileList.ItemsSource = new List<SharedFile>(channel.files);
+            }));
         }
+        public void PrivateMessageUpdate(Message message)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (message == null)
+                {
+                    return;
+                }
+                foreach (PrivateChatView window in privateWindows)
+                {
+                    if (window.recipient == message.sender)
+                    {
+                        window.AddMessage(message);
+                        window.Activate();
+                        return;
+                    }
+                }
+                OpenPrivateChat(message.sender);
+                foreach (PrivateChatView window in privateWindows)
+                {
+                    if (window.recipient == message.sender)
+                    {
+                        window.AddMessage(message);
+                        break;
+                    }
+                }
+            }));
+        }
+        public void FileUpdate(SharedFile file)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (file == null)
+                {
+                    return;
+                }
+                LoadChannel();
+            }));
+        }
+
+        //uncomment if fails
+        //public ChannelView(string userId, string channelName, ChatContract.IChatService foob)
+        //{
+        //    InitializeComponent();
+        //    this.userId = userId;
+        //    this.channelName = channelName;
+        //    this.foob = foob;
+        //    ChannelNameText.Text = channelName;
+        //    StartPolling();
+        //}
 
         private async Task LoadNotifications()
         {
@@ -90,14 +142,20 @@ namespace DuplexClient.src
         {
             try
             {
-                Task<Channel> task = new Task<Channel>(() => foob.GetChannel(channelName, userId));
-                task.Start();
-                Channel channel = await task;
+                //test rmv if fails
+                Channel channel = await Task.Run(() => foob.GetChannel(channelName, userId));
+                //uncomment if fails
+                //Task<Channel> task = new Task<Channel>(() => foob.GetChannel(channelName, userId));
+                //task.Start();
+                //Channel channel = await task;
 
                 if (channel == null)
                 {
                     MessageBox.Show("Channel not found", "Channel not found", MessageBoxButton.OK);
                     NavigationService.GoBack();
+
+                    //test rmv if fails
+                    return;
                 }
 
                 MessageList.ItemsSource = channel.messages;
@@ -122,12 +180,21 @@ namespace DuplexClient.src
 
             try
             {
-                Task task = new Task(() => foob.SendMessage(userId, channelName, message));
-                task.Start();
+                //test rmv if fails
                 MessageTextBox.Clear();
+                await Task.Run(() => foob.SendMessage(userId, channelName, message));
+                //uncomment if fails
+                //Task task = new Task(() => foob.SendMessage(userId, channelName, message));
+                //task.Start();
+                //MessageTextBox.Clear();
 
-                await task;
-                await LoadChannel();
+                //await task;
+
+                //uncomment if fails
+                //await LoadChannel();
+
+                //test - rmv if fails
+                //MessageTextBox.Clear();
             }
             catch (Exception ex)
             {
@@ -142,6 +209,10 @@ namespace DuplexClient.src
             try
             {
                 foob.LeaveChannel(userId);
+
+                //test rmv if fails
+                callback.ClearChannelView();
+
                 NavigationService.GoBack();
             }
             catch (Exception ex)
@@ -254,9 +325,14 @@ namespace DuplexClient.src
                     return;
                 }
 
-                Task<SharedFile> task = new Task<SharedFile>(() => foob.ShareFile(userId, fileName, data, channelName));
-                task.Start();
-                SharedFile file = await task;
+
+                //test rmv if fails
+                SharedFile file = await Task.Run(() => foob.ShareFile(userId, fileName, data, channelName));
+
+                //uncomment if fails
+                //Task<SharedFile> task = new Task<SharedFile>(() => foob.ShareFile(userId, fileName, data, channelName));
+                //task.Start();
+                //SharedFile file = await task;
 
                 if (file == null)
                 {
@@ -266,7 +342,7 @@ namespace DuplexClient.src
                        MessageBoxButton.OK);
                     return;
                 }
-                await LoadChannel();
+                //await LoadChannel();
             }
             catch (Exception ex)
             {

@@ -6,11 +6,13 @@ namespace DuplexClient.src
 {
     public partial class LoginView : Page
     {
-        ChatContract.IChatService foob;
+        private ChatContract.IChatService foob;
+        private ChatCallbackImpl callback;
         public LoginView(ChatContract.IChatService chatContract)
         {
             InitializeComponent();
             foob = chatContract;
+            this.callback = callback;
         }
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
@@ -33,7 +35,7 @@ namespace DuplexClient.src
                 }
                 else
                 {
-                    NavigationService.Navigate(new ChannelListPage(userId, foob));
+                    NavigationService.Navigate(new ChannelListPage(userId, foob, callback));
                 }
             }
             catch (Exception ex)
