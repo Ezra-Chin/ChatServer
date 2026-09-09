@@ -16,12 +16,16 @@ namespace DuplexClient.src
         private ChatContract.IChatService foob;
         private string userId;
         private CancellationTokenSource cancellationTokenSource;
+        private ChatCallbackImpl callback;
 
-        public ChannelListPage(string id, ChatContract.IChatService chatContract)
+        public ChannelListPage(string id, ChatContract.IChatService chatContract, ChatCallbackImpl callback)
         {
             InitializeComponent();
             foob = chatContract;
+            this.callback = callback;
+            callback.channelListPage = this;
             userId = id;
+
             WelcomeText.Text = $"Welcome, {id}!";
             LoadChannels();
         }
@@ -34,7 +38,7 @@ namespace DuplexClient.src
             });
         }
 
-        public async Task LoadChannels()
+        public async void LoadChannels()
         {
             try
             {
@@ -60,7 +64,7 @@ namespace DuplexClient.src
             {
                 foob.JoinChannel(userId, channel.channelName);
                 NavigationService.Navigate(
-                    new ChannelView(userId, channel.channelName, foob));
+                    new ChannelView(userId, channel.channelName, foob, callback));
             }
             catch (Exception ex)
             {
@@ -120,7 +124,8 @@ namespace DuplexClient.src
             try
             {
                 foob.SignOut(userId);
-                NavigationService.Navigate(new LoginView(foob));
+                callback.channelListPage = null;
+                NavigationService.Navigate(new LoginView(foob,callback));
             }
             catch (Exception ex)
             {

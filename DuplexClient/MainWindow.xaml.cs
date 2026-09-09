@@ -10,13 +10,11 @@ namespace DuplexClient
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public delegate void CreateChannel();
 
     public partial class MainWindow : Window
     {
         private IChatService foob;
-        private IChatCallback foobCallback;
-        private CreateChannel createChannel;
+        private ChatCallbackImpl foobCallback;
         IAsyncResult asyncResult;
         private DuplexChannelFactory<ChatContract.IChatService> factory;
 
@@ -34,12 +32,12 @@ namespace DuplexClient
 
             //REMINDER TO CHANGE THIS DURING PROD 
             string URL = "net.tcp://localhost:9000/Chat/Duplex";
-            //foobCallback = new ChatCallbackImpl(this);
+            foobCallback = new ChatCallbackImpl();
             foobFactory = new DuplexChannelFactory<IChatService>(foobCallback, tcp, URL);
 
             foob = foobFactory.CreateChannel();
 
-            MainFrame.Navigate(new src.LoginView(foob));
+            MainFrame.Navigate(new src.LoginView(foob, foobCallback));
         }
     }
 }

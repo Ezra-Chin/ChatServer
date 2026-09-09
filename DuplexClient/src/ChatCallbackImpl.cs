@@ -11,19 +11,30 @@ using System.Windows.Controls;
 namespace DuplexClient.src
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
-    public class ChatCallbackImpl : IChatCallback
+    public class  ChatCallbackImpl : IChatCallback
     {
         //private MainWindow mainWindow;
 
         //test
-        private ChannelListPage channelListPage;
-        public ChatCallbackImpl (ChannelListPage channelListPage)
+        public ChannelListPage channelListPage { get; set; }
+        public ChannelView channelView { get; set; }
+        public PrivateChatView privateChatView { get; set; }
+        public ChatCallbackImpl ()
         {
-            this.channelListPage = channelListPage;
         }
         public void ChannelListUpdate()
         {
+
             channelListPage.ChannelListUpdate();
+        }
+
+        public void ChannelViewUpdate()
+        {
+            channelView.ChannelViewUpdate();
+        }
+        public void PrivateChatViewUpdate()
+        {
+           privateChatView.PrivateChatViewUpdate();
         }
 
         //public ChatCallbackImpl(ChannelListPage page)
