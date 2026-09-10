@@ -62,5 +62,8 @@ namespace ChatContract
 
         [OperationContract]
         void MarkNotificationAsRead(Notification notification);
+
+        [OperationContract]
+        byte[] DownloadFile(string channelName, string fileId);
     }
 }

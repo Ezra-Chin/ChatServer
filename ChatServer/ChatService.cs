@@ -422,7 +422,14 @@ namespace ChatServer
                 {
                     channelName = channel.channelName,
                     members = new List<string>(channel.members),
-                    files = new List<SharedFile>(channel.files),
+                    files = channel.files.Select(f => new SharedFile
+                    {
+                        fileId = f.fileId,
+                        fileName = f.fileName,
+                        sharedBy = f.sharedBy,
+                        channelName = f.channelName,
+                        data = null
+                    }).ToList(),
                     //only show messages from when the user join
                     messages = channel.messages.Where(x => x.time >= user.joinedChannelAt).ToList()
                 };
@@ -462,32 +469,42 @@ namespace ChatServer
         //        }
         //    }
         //}
-        
-        public SharedFile ShareFile(
-            string userId,
-            string fileName,
-            byte[] data,
-            string channelName)
+        public byte[] DownloadFile(string channelName, string fileId)
         {
-            if (data.Length > 2 * 1024 * 1024)
-                return null;
-
-            Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName.Equals(channelName));
-            
-            if (channel == null)
+            lock (Storage.LockObject)
             {
-                return null;
+                SharedFile file = Storage.Channels
+                    .SelectMany(c => c.files)
+                    .FirstOrDefault(f => f.fileId == fileId);
+
+                Console.WriteLine($"DownloadFile: id='{fileId}' found={file != null} bytes={file?.data?.Length ?? -1}");
+                return file?.data;
             }
+        }
+        public SharedFile ShareFile(string userId, string fileName, byte[] data, string channelName)
+        {
+            if (data == null || data.Length > 2 * 1024 * 1024)
+                return null;
 
-            SharedFile file =
-            new SharedFile
+            Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName == channelName);
+            if (channel == null)
+                return null;
+
+            SharedFile file = new SharedFile
             {
+                fileId = Guid.NewGuid().ToString(),
                 fileName = fileName,
                 sharedBy = userId,
+                channelName = channelName,
                 data = data
             };
 
-            channel.files.Add(file);
+            lock (Storage.LockObject)
+            {
+                channel.files.Add(file);
+            }
+
+
             List<IChatCallback> snapshot;
             lock (clientsLock)
             {
@@ -496,19 +513,24 @@ namespace ChatServer
 
             foreach (IChatCallback client in snapshot)
             {
-                try
+                try 
+                { 
+                    client.ChannelViewUpdate(); 
+                }catch (Exception) 
                 {
-                    client.ChannelViewUpdate();
-                }
-                catch (Exception)
-                {
-                    lock (clientsLock)
-                    {
+                    lock (clientsLock) {
                         clients.Remove(client);
                     }
                 }
             }
-            return file;
+
+            return new SharedFile
+            {
+                fileId = file.fileId,
+                fileName = file.fileName,
+                sharedBy = file.sharedBy,
+                channelName = file.channelName
+            };
         }
     }
 }

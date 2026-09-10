@@ -13,7 +13,7 @@ namespace PollingClient.src
     public partial class ChannelListPage : Page
     {
         private ChatContract.IPollingChatService foob;
-        private string userId;
+        public string userId;
         private CancellationTokenSource cancellationTokenSource;
 
         public ChannelListPage(string id, ChatContract.IPollingChatService chatContract)

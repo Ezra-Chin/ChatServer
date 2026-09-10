@@ -13,7 +13,7 @@ namespace PollingClient.src
     public partial class ChannelView : Page
     {
         private ChatContract.IPollingChatService foob;
-        private string userId;
+        public string userId;
         private string channelName;
         private CancellationTokenSource cancellationTokenSource;
         private List<PrivateChatView> privateWindows = new List<PrivateChatView>();
@@ -200,37 +200,46 @@ namespace PollingClient.src
             newWindow.Show();
         }
 
-        private void FileList_DoubleClick(object sender, RoutedEventArgs e)
+        private async void FileList_DoubleClick(object sender, RoutedEventArgs e)
         {
-            if (FileList.SelectedItem == null)
-            {
+            if (!(FileList.SelectedItem is SharedFile file))
                 return;
-            }
 
-            SharedFile file = FileList.SelectedItem as SharedFile;
+            string ext = Path.GetExtension(file.fileName);
 
-            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
-
-            dialog.FileName = file.fileName;
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = file.fileName,
+                DefaultExt = ext,
+                AddExtension = true,
+                Filter = $"{ext} file|*{ext}"
+            };
 
             if (dialog.ShowDialog() != true)
-            {
                 return;
-            }
+
+            string savePath = dialog.FileName;
+            if (!savePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+                savePath += ext;
 
             try
             {
-                File.WriteAllBytes(dialog.FileName, file.data);
+                byte[] bytes = await Task.Run(() => foob.DownloadFile(channelName, file.fileId));
+
+                if (bytes == null || bytes.Length == 0)
+                {
+                    MessageBox.Show("No file found", "No file found");
+                    return;
+                }
+
+                File.WriteAllBytes(savePath, bytes);
+                MessageBox.Show($"Saved to:\n{savePath}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                   "Failed to Downlaod File .",
-                   "Downlaod Error",
-                   MessageBoxButton.OK);
+                MessageBox.Show(ex.Message, "Download Error");
             }
         }
-
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();

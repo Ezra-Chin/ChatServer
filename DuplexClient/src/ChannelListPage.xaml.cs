@@ -14,7 +14,7 @@
         public partial class ChannelListPage : Page
         {
             private ChatContract.IChatService foob;
-            private string userId;
+            public string userId;
             private CancellationTokenSource cancellationTokenSource;
             private ChatCallbackImpl callback;
 
