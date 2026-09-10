@@ -24,16 +24,18 @@ namespace DuplexClient.src
         }
         public void ChannelListUpdate()
         {
-
+            if (channelListPage == null) return;
             channelListPage.ChannelListUpdate();
         }
 
         public void ChannelViewUpdate()
         {
+            if (channelView == null) return;
             channelView.ChannelViewUpdate();
         }
         public void PrivateChatViewUpdate()
         {
+            if (privateChatView == null) return;
            privateChatView.PrivateChatViewUpdate();
         }
 

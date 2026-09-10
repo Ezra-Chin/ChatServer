@@ -82,7 +82,6 @@ namespace DuplexClient.src
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            cancellationTokenSource.Cancel();
             Close();
 
         }

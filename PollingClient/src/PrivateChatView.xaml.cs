@@ -22,6 +22,8 @@ namespace PollingClient.src
             this.sender = sender;
             this.recipient = recipient;
             RecipientText.Text = recipient;
+            Unloaded += (s, e) => StopPolling();
+
 
             StartPolling();
         }
@@ -43,6 +45,15 @@ namespace PollingClient.src
             catch (TaskCanceledException)
             {
             }
+        }
+        private void StopPolling()
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+            }
+
+         
         }
 
         private async Task LoadChat()

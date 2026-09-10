@@ -25,6 +25,7 @@ namespace PollingClient.src
             this.channelName = channelName;
             this.foob = foob;
             ChannelNameText.Text = channelName;
+
             StartPolling();
         }
 
@@ -47,7 +48,18 @@ namespace PollingClient.src
             {
             }
         }
+        private void StopPolling()
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+            }
 
+            foreach (PrivateChatView window in privateWindows.ToList())
+            {
+                window.Close();
+            }
+        }
         private async Task LoadNotifications()
         {
             try
@@ -137,6 +149,7 @@ namespace PollingClient.src
             try
             {
                 foob.LeaveChannel(userId);
+                StopPolling();
                 NavigationService.GoBack();
             }
             catch (Exception ex)

@@ -375,6 +375,9 @@ namespace ChatServer
             {
                 try
                 {
+                    Console.WriteLine($"[{senderId}] notifying {snapshot.Count} clients");
+
+                    client.ChannelViewUpdate();
                     client.PrivateChatViewUpdate();
                 }
                 catch (Exception)

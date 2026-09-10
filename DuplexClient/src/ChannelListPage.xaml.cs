@@ -1,140 +1,140 @@
-﻿using Chat;
-using System;
-using System.Collections.Generic;
-using System.Runtime.Remoting.Channels;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿    using Chat;
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.Remoting.Channels;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Controls;
 
 
-namespace DuplexClient.src
-{
-
-    public partial class ChannelListPage : Page
+    namespace DuplexClient.src
     {
-        private ChatContract.IChatService foob;
-        private string userId;
-        private CancellationTokenSource cancellationTokenSource;
-        private ChatCallbackImpl callback;
 
-        public ChannelListPage(string id, ChatContract.IChatService chatContract, ChatCallbackImpl callback)
+        public partial class ChannelListPage : Page
         {
-            InitializeComponent();
-            foob = chatContract;
-            this.callback = callback;
-            callback.channelListPage = this;
-            userId = id;
+            private ChatContract.IChatService foob;
+            private string userId;
+            private CancellationTokenSource cancellationTokenSource;
+            private ChatCallbackImpl callback;
 
-            WelcomeText.Text = $"Welcome, {id}!";
-            LoadChannels();
-        }
-      
-        public void ChannelListUpdate()
-        {
-            Dispatcher.Invoke(() =>
+            public ChannelListPage(string id, ChatContract.IChatService chatContract, ChatCallbackImpl callback)
             {
+                InitializeComponent();
+                foob = chatContract;
+                this.callback = callback;
+                callback.channelListPage = this;
+                userId = id;
+
+                WelcomeText.Text = $"Welcome, {id}!";
                 LoadChannels();
-            });
-        }
-
-        public async void LoadChannels()
-        {
-            try
-            {
-                Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
-                task.Start();
-                List<Channel> channels = await task;
-
-                ChannelList.ItemsSource = channels;
             }
-            catch (Exception ex)
+      
+            public void ChannelListUpdate()
             {
-                MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                Dispatcher.Invoke(() =>
+                {
+                    LoadChannels();
+                });
             }
-        }
 
-        private void Join_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = (Button)sender;
-            Channel channel = (Channel)button.DataContext;
-
-            try
+            public async void LoadChannels()
             {
-                foob.JoinChannel(userId, channel.channelName);
-                NavigationService.Navigate(
-                    new ChannelView(userId, channel.channelName, foob, callback));
+                try
+                {
+                    Task<List<Channel>> task = new Task<List<Channel>>(() => foob.GetChannels());
+                    task.Start();
+                    List<Channel> channels = await task;
+
+                    ChannelList.ItemsSource = channels;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Failed to join channel",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-        }
 
-        //creates new channel
-        private async void CreateChannel_Click(object sender, RoutedEventArgs e)
-        {
-            string channelName = ChannelNameTextBox.Text.Trim();
-            ChannelNameTextBox.Text = channelName;
+            private void Join_Click(object sender, RoutedEventArgs e)
+            {
+                Button button = (Button)sender;
+                Channel channel = (Channel)button.DataContext;
 
-            if (string.IsNullOrWhiteSpace(channelName))
-            {
-                MessageBox.Show(
-                    "Please enter a channel name.",
-                    "Invalid Channel Name",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                return;
-            }
-            try
-            {
-                Task<Boolean> task = new Task<Boolean>(() => foob.CreateChannel(userId, channelName));
-                task.Start();
-                Boolean res = await task;
-                if (!res)
+                try
+                {
+                    foob.JoinChannel(userId, channel.channelName);
+                    NavigationService.Navigate(
+                        new ChannelView(userId, channel.channelName, foob, callback));
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                   "Channel Already Exist",
-                   "Channel Already Created",
-                   MessageBoxButton.OK,
-                   MessageBoxImage.Warning);
+                        $"Failed to join channel",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
-                ChannelNameTextBox.Clear();
+            }
 
-                LoadChannels();
-            }
-            catch (Exception ex)
+            //creates new channel
+            private async void CreateChannel_Click(object sender, RoutedEventArgs e)
             {
-                MessageBox.Show(
-                  ex.Message,
-                  "Failed to create channel",
-                  MessageBoxButton.OK,
-                  MessageBoxImage.Warning);
-                return;
-            }
-        }
+                string channelName = ChannelNameTextBox.Text.Trim();
+                ChannelNameTextBox.Text = channelName;
 
-        private void SignOut_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                foob.SignOut(userId);
-                callback.channelListPage = null;
-                NavigationService.Navigate(new LoginView(foob,callback));
+                if (string.IsNullOrWhiteSpace(channelName))
+                {
+                    MessageBox.Show(
+                        "Please enter a channel name.",
+                        "Invalid Channel Name",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+                try
+                {
+                    Task<Boolean> task = new Task<Boolean>(() => foob.CreateChannel(userId, channelName));
+                    task.Start();
+                    Boolean res = await task;
+                    if (!res)
+                    {
+                        MessageBox.Show(
+                       "Channel Already Exist",
+                       "Channel Already Created",
+                       MessageBoxButton.OK,
+                       MessageBoxImage.Warning);
+                    }
+                    ChannelNameTextBox.Clear();
+
+                    LoadChannels();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                      ex.Message,
+                      "Failed to create channel",
+                      MessageBoxButton.OK,
+                      MessageBoxImage.Warning);
+                    return;
+                }
             }
-            catch (Exception ex)
+
+            private void SignOut_Click(object sender, RoutedEventArgs e)
             {
-                MessageBox.Show(
-                  $"Failed to sign out",
-                  "Error",
-                  MessageBoxButton.OK,
-                  MessageBoxImage.Error);
+                try
+                {
+                    foob.SignOut(userId);
+                    callback.channelListPage = null;
+                    NavigationService.Navigate(new LoginView(foob,callback));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                      $"Failed to sign out",
+                      "Error",
+                      MessageBoxButton.OK,
+                      MessageBoxImage.Error);
+                }
             }
         }
     }
-}

@@ -44,6 +44,16 @@ namespace PollingClient.src
             }
         }
 
+        private void StopPolling()
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+            }
+
+          
+        }
+
         public async Task LoadChannels()
         {
             try
@@ -128,6 +138,7 @@ namespace PollingClient.src
             try
             {
                 foob.SignOut(userId);
+                StopPolling(); 
                 NavigationService.Navigate(new LoginView(foob));
             }
             catch (Exception ex)

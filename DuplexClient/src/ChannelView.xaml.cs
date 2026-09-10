@@ -135,6 +135,8 @@ namespace DuplexClient.src
         {
             try
             {
+                callback.channelView = null;
+
                 foob.LeaveChannel(userId);
                 NavigationService.GoBack();
             }
