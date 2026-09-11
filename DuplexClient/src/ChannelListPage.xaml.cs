@@ -74,7 +74,7 @@
                 catch (Exception ex)
                 {
                     MessageBox.Show(
-                        $"Failed to join channel",
+                        "Failed to join channel",
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -136,7 +136,7 @@
                 catch (Exception ex)
                 {
                     MessageBox.Show(
-                      $"Failed to sign out",
+                      "Failed to sign out",
                       "Error",
                       MessageBoxButton.OK,
                       MessageBoxImage.Error);

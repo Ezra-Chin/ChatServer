@@ -27,14 +27,26 @@ namespace PollingClient
                         foob.LeaveChannel(channelView.userId);
                     } 
                     catch 
-                    {}
+                    {
+                        MessageBox.Show(
+                            "Failed to leave channel",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
 
                     try 
                     { 
                         foob.SignOut(channelView.userId); 
                     } 
                     catch 
-                    {}
+                    {
+                        MessageBox.Show(
+                            "Failed to sign out",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
                 }
                 else if (MainFrame.Content is src.ChannelListPage channelListPage)
                 {
@@ -43,7 +55,13 @@ namespace PollingClient
                         foob.SignOut(channelListPage.userId); 
                     } 
                     catch 
-                    {}
+                    {
+                        MessageBox.Show(
+                            "Failed to sign out",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
                 }
             };
             MainFrame.Navigate(new src.LoginView(foob));

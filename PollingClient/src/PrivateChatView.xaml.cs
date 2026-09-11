@@ -52,6 +52,7 @@ namespace PollingClient.src
                     MessageBoxImage.Error);
             }
         }
+        
         private void StopPolling()
         {
             if (cancellationTokenSource != null)

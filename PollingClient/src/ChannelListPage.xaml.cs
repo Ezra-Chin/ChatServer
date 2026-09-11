@@ -109,6 +109,7 @@ namespace PollingClient.src
                     "Invalid Channel Name",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
+
                 return;
             }
             try
@@ -124,8 +125,8 @@ namespace PollingClient.src
                    MessageBoxButton.OK,
                    MessageBoxImage.Warning);
                 }
-                ChannelNameTextBox.Clear();
 
+                ChannelNameTextBox.Clear();
                 LoadChannels();
             }
             catch (Exception ex)
@@ -135,6 +136,7 @@ namespace PollingClient.src
                   "Failed to create channel",
                   MessageBoxButton.OK,
                   MessageBoxImage.Warning);
+                
                 return;
             }
         }

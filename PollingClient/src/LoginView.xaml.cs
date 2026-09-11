@@ -40,8 +40,7 @@ namespace PollingClient.src
             {
                 MessageBox.Show(
                     ex.ToString(), 
-                    "An error occurred while signing in."
-                    ); 
+                    "An error occurred while signing in."); 
                 
                 return;
             }

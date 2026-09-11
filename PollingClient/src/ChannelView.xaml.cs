@@ -86,10 +86,12 @@ namespace PollingClient.src
                             break;
                         }
                     }
+
                     if (open == false)
                     {
                         OpenPrivateChat(notification.sender);
                     }
+
                     Task taskb = new Task(() => foob.MarkNotificationAsRead(notification));
                     taskb.Start();
                     await taskb;
@@ -224,7 +226,9 @@ namespace PollingClient.src
         private async void FileList_DoubleClick(object sender, RoutedEventArgs e)
         {
             if (!(FileList.SelectedItem is SharedFile file))
+            {
                 return;
+            }
 
             string ext = Path.GetExtension(file.fileName);
 
@@ -237,11 +241,15 @@ namespace PollingClient.src
             };
 
             if (dialog.ShowDialog() != true)
+            {
                 return;
+            }
 
             string savePath = dialog.FileName;
             if (!savePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+            {
                 savePath += ext;
+            }
 
             try
             {
@@ -261,6 +269,7 @@ namespace PollingClient.src
                 MessageBox.Show(ex.Message, "Download Error");
             }
         }
+
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
@@ -278,6 +287,7 @@ namespace PollingClient.src
                         "Error", 
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
+                    
                     return;
                 }
 
@@ -304,6 +314,7 @@ namespace PollingClient.src
                        MessageBoxImage.Error;
                     return;
                 }
+                
                 await LoadChannel();
             }
             catch (Exception ex)

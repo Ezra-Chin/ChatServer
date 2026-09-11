@@ -89,7 +89,12 @@ namespace DuplexClient.src
 
                 if (channel == null)
                 {
-                    MessageBox.Show("Channel not found", "Channel not found", MessageBoxButton.OK);
+                    MessageBox.Show(
+                        "Channel not found", 
+                        "Error", 
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    
                     NavigationService.GoBack();
                 }
 
@@ -125,7 +130,10 @@ namespace DuplexClient.src
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Failed to send message", "Failed to Send Message", MessageBoxButton.OK);
+                    "Failed to send message", 
+                    "Error", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -142,7 +150,10 @@ namespace DuplexClient.src
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Failed to leave channels", "Failed to leave channel", MessageBoxButton.OK);
+                    "Failed to leave channels", 
+                    "Error", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -257,7 +268,11 @@ namespace DuplexClient.src
                 byte[] data = File.ReadAllBytes(dialog.FileName);
                 if (data.Length > 2 * 1024 * 1024)
                 {
-                    MessageBox.Show("File size exceeds 2MB", "File Size Exceeded", MessageBoxButton.OK);
+                    MessageBox.Show(
+                        "File size exceeds 2MB", 
+                        "Error", 
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                     return;
                 }
 
@@ -280,8 +295,10 @@ namespace DuplexClient.src
                 {
                     MessageBox.Show(
                        "Failed to share file.",
-                       "File Sharing Error",
-                       MessageBoxButton.OK);
+                       "Error",
+                       MessageBoxButton.OK,
+                       MessageBoxImage.Error);
+
                     return;
                 }
                 LoadChannel();
@@ -290,8 +307,9 @@ namespace DuplexClient.src
             {
                 MessageBox.Show(
                      "Failed to share file.",
-                     "File Sharing Error",
-                     MessageBoxButton.OK);
+                     "Error",
+                     MessageBoxButton.OK,
+                     MessageBoxImage.Error);
             }
         }
     }

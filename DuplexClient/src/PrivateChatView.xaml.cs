@@ -49,7 +49,11 @@ namespace DuplexClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to load chat", "Unable to Load Chat", MessageBoxButton.OK);
+                MessageBox.Show(
+                    "Unable to load chat", 
+                    "UError", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -72,8 +76,11 @@ namespace DuplexClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to Send Message", "Unable to send message", MessageBoxButton.OK);
-
+                MessageBox.Show(
+                    "Unable to Send Message", 
+                    "Error", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
