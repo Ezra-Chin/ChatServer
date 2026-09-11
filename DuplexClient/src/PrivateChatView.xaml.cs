@@ -13,9 +13,10 @@ namespace DuplexClient.src
     {
         ChatContract.IChatService foob;
         private string sender;
+        private ChatCallbackImpl callback;
         public string recipient { get; }
         private CancellationTokenSource cancellationTokenSource;
-        private ChatCallbackImpl callback;
+
         public PrivateChatView(ChatContract.IChatService chatContract, string sender, string recipient, ChatCallbackImpl callback)
         {
             InitializeComponent();
@@ -28,8 +29,6 @@ namespace DuplexClient.src
 
             LoadChat();
         }
-
-      
 
         public void PrivateChatViewUpdate()
         {
@@ -47,8 +46,6 @@ namespace DuplexClient.src
                 task.Start();
                 List<Message> message = await task;
                 PrivateMessageList.ItemsSource = message;
-
-
             }
             catch (Exception ex)
             {
@@ -83,9 +80,6 @@ namespace DuplexClient.src
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Close();
-
         }
-
-
     }
 }

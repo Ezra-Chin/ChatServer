@@ -6,22 +6,12 @@ using System.Windows;
 
 namespace DuplexClient
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
-
     public partial class MainWindow : Window
     {
         private IChatService foob;
         private ChatCallbackImpl foobCallback;
         IAsyncResult asyncResult;
         private DuplexChannelFactory<ChatContract.IChatService> factory;
-
-        //private ChatCallbackImpl callback;
-
-        //private ProcessLongTask longTask;
-
 
         public MainWindow()
         {
@@ -30,12 +20,13 @@ namespace DuplexClient
             DuplexChannelFactory<IChatService> foobFactory;
             NetTcpBinding tcp = new NetTcpBinding();
 
-            //REMINDER TO CHANGE THIS DURING PROD 
             string URL = "net.tcp://localhost:9000/Chat/Duplex";
             foobCallback = new ChatCallbackImpl();
             foobFactory = new DuplexChannelFactory<IChatService>(foobCallback, tcp, URL);
 
             foob = foobFactory.CreateChannel();
+
+            //take who sent it and what they sent and run it immediately
             Closing += (s, e) =>
             {
                 if (MainFrame.Content is src.ChannelView channelView)
@@ -44,12 +35,15 @@ namespace DuplexClient
                     {
                         foob.LeaveChannel(channelView.userId);
                     }
-                    catch { }
+                    catch 
+                    {}
+                    
                     try
                     {
                         foob.SignOut(channelView.userId);
                     }
-                    catch { }
+                    catch 
+                    {}
                 }
                 else if (MainFrame.Content is src.ChannelListPage channelListPage)
                 {
@@ -57,7 +51,8 @@ namespace DuplexClient
                     {
                         foob.SignOut(channelListPage.userId);
                     }
-                    catch { }
+                    catch 
+                    {}
                 }
             };
             MainFrame.Navigate(new src.LoginView(foob, foobCallback));

@@ -10,19 +10,6 @@ namespace ChatServer
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
     public class ChatService : IChatService, IPollingChatService
     {
-
-        //private static List<IChatCallback> clients = new List<IChatCallback>();
-        //private static readonly object clientsLock = new object();
-
-        //public ChatService()
-        //{
-        //    IChatCallback callback = OperationContext.Current.GetCallbackChannel<IChatCallback>();
-        //    lock (clientsLock)
-        //    {
-        //        clients.Add(callback);
-        //    }
-        //}
-
         private static List<IChatCallback> clients = new List<IChatCallback>();
         private static readonly object clientsLock = new object();
 
@@ -30,16 +17,16 @@ namespace ChatServer
         private static IChatCallback TryGetCallback()
         {
             OperationContext context = OperationContext.Current;
-          
-
             try
             {
                 return context.GetCallbackChannel<IChatCallback>();
             }
-            catch (InvalidCastException) { 
+            catch (InvalidCastException) 
+            { 
                 return null;
             }   
-            catch (InvalidOperationException) {
+            catch (InvalidOperationException) 
+            {
                 return null; 
             }
         } 
@@ -47,24 +34,26 @@ namespace ChatServer
         //sign in to chat server
         public bool SignIn(string userId)
         {
-
             lock (Storage.LockObject)
             {
                 //prevent duplicate user session
-                if (Storage.Users.Any(
-                    x => x.userId == userId))
+                if (Storage.Users.Any(x => x.userId == userId))
                 {
                     return false;
                 }
 
-                Storage.Users.Add(
-                    new User
-                    {
-                        userId = userId
-                    });
+                Storage.Users.Add(new User
+                {
+                    userId = userId
+                });
             }
+
             IChatCallback callback = TryGetCallback();
-            if (callback == null) return true ; 
+
+            if (callback == null) 
+            {
+                return true; 
+            }
             lock (clientsLock)
             {
                 clients.Add(callback);
@@ -77,9 +66,7 @@ namespace ChatServer
         {
             lock (Storage.LockObject)
             {
-                User user =
-                Storage.Users.FirstOrDefault(
-                    x => x.userId == userId);
+                User user = Storage.Users.FirstOrDefault(x => x.userId == userId);
 
                 if (user != null)
                 {
@@ -87,8 +74,13 @@ namespace ChatServer
                     Storage.Users.Remove(user);
                 }
             }
+
             IChatCallback callback = TryGetCallback();
-            if (callback == null) return;
+
+            if (callback == null) 
+            {
+                return;
+            }
             lock (clientsLock)
             {
                 clients.Remove(OperationContext.Current.GetCallbackChannel<IChatCallback>());
@@ -102,26 +94,24 @@ namespace ChatServer
         }
 
         //create new channel
-        public bool CreateChannel(
-            string userId,
-            string channelName)
+        public bool CreateChannel(string userId, string channelName)
         {
             lock (Storage.LockObject)
             {
-                if (Storage.Channels.Any(
-                    x => x.channelName == channelName))
+                if (Storage.Channels.Any(x => x.channelName == channelName))
                 {
                     return false;
                 }
 
-                Storage.Channels.Add(
-                    new Channel
-                    {
-                        channelName = channelName
-                    });
+                Storage.Channels.Add(new Channel
+                {
+                    channelName = channelName
+                });
             }
 
+            //make a copy of current clients before notifying
             List<IChatCallback> snapshot;
+
             lock (clientsLock)
             {
                 snapshot = new List<IChatCallback>(clients);
@@ -141,34 +131,21 @@ namespace ChatServer
                     }
                 }
             }
-
-            //foreach (IChatCallback client in clients)
-            //{
-            //    try
-            //    {
-            //        client.ChannelListUpdate();
-            //    }
-            //    catch(Exception ex)
-            //    {
-
-            //    }
-            //}
             return true;
         }
 
         //add user to a channel
-        public void JoinChannel(
-            string userId,
-            string channelName)
+        public void JoinChannel(string userId, string channelName)
         {
             lock (Storage.LockObject)
             {
                 Channel channel =
-                Storage.Channels.FirstOrDefault(
-                    x => x.channelName == channelName);
+                Storage.Channels.FirstOrDefault(x => x.channelName == channelName);
 
                 if (channel == null)
+                {
                     return;
+                }
 
                 //rmv user from previous channel
                 foreach (Channel c in Storage.Channels)
@@ -179,15 +156,13 @@ namespace ChatServer
                 //add user to selected channels
                 channel.members.Add(userId);
 
-                User user =
-                Storage.Users.First(
-                    x => x.userId == userId);
+                User user = Storage.Users.First(x => x.userId == userId);
 
-                user.currentChannel =
-                    channelName;
+                user.currentChannel = channelName;
 
                 user.joinedChannelAt = DateTime.Now;
             }
+
             List<IChatCallback> snapshot;
             lock (clientsLock)
             {
@@ -208,21 +183,17 @@ namespace ChatServer
                     }
                 }
             }
-
         }
 
         //rmv user from their curr channel
-        public void LeaveChannel(
-            string userId)
+        public void LeaveChannel(string userId)
         {
             foreach (Channel c in Storage.Channels)
             {
                 c.members.Remove(userId);
             }
 
-            User user =
-            Storage.Users.FirstOrDefault(
-                x => x.userId == userId);
+            User user = Storage.Users.FirstOrDefault(x => x.userId == userId);
 
             if (user != null)
             {
@@ -251,14 +222,9 @@ namespace ChatServer
         }
 
         //Sends msg to public channel
-        public void SendMessage(
-            string userId,
-            string channelName,
-            string message)
+        public void SendMessage(string userId, string channelName, string message)
         {
-            User user =
-            Storage.Users.FirstOrDefault(
-                x => x.userId == userId);
+            User user = Storage.Users.FirstOrDefault(x => x.userId == userId);
 
             if (user == null)
             {
@@ -298,7 +264,6 @@ namespace ChatServer
                     }
                 }
             }
-
         }
 
         //get private chat between 2 users
@@ -316,18 +281,11 @@ namespace ChatServer
         }
 
         //send private msg to another user
-        public void SendPrivateMessage(
-            string senderId,
-            string recipientId,
-            string message)
+        public void SendPrivateMessage(string senderId, string recipientId, string message)
         {
-            User sender =
-            Storage.Users.FirstOrDefault(
-                x => x.userId == senderId);
+            User sender = Storage.Users.FirstOrDefault(x => x.userId == senderId);
 
-            User receiver =
-            Storage.Users.FirstOrDefault(
-                x => x.userId == recipientId);
+            User receiver = Storage.Users.FirstOrDefault(x => x.userId == recipientId);
 
             if (sender == null || receiver == null)
             {
@@ -335,8 +293,7 @@ namespace ChatServer
             }
 
             //only allow private msg in same channel
-            if (sender.currentChannel !=
-               receiver.currentChannel)
+            if (sender.currentChannel != receiver.currentChannel)
             {
                 return;
             }
@@ -361,6 +318,7 @@ namespace ChatServer
                 text = message,
                 time = DateTime.Now,
             };
+
             privateChat.messages.Add(newMessage);
 
             Storage.Notifications.Add(new Notification(recipientId, senderId, newMessage, false));
@@ -396,7 +354,6 @@ namespace ChatServer
             {
                 return Storage.Notifications.Where(x => x.recipient == userId && !x.read).ToList();
             }
-
         }
 
         //get channel info to user
@@ -430,6 +387,7 @@ namespace ChatServer
                         channelName = f.channelName,
                         data = null
                     }).ToList(),
+
                     //only show messages from when the user join
                     messages = channel.messages.Where(x => x.time >= user.joinedChannelAt).ToList()
                 };
@@ -446,29 +404,14 @@ namespace ChatServer
             {
                 foreach (Notification notification in Storage.Notifications)
                 {
-                    if (notification.recipient == recipient &&
-                        notification.sender == sender)
+                    if (notification.recipient == recipient && notification.sender == sender)
                     {
                         notification.read = true;
                     }
                 }
             }
-
         }
 
-        //public void MarkNotificationAsRead(Notification notification)
-        //{
-        //    lock (Storage.LockObject)
-        //    {
-        //        Notification existingNotification = Storage.Notifications.FirstOrDefault(x => x.recipient == notification.recipient && x.sender == notification.sender && x.message == notification.message && !x.read);
-
-        //        if (existingNotification != null)
-        //        {
-        //            Console.WriteLine("Read");
-        //            existingNotification.read = true;
-        //        }
-        //    }
-        //}
         public byte[] DownloadFile(string channelName, string fileId)
         {
             lock (Storage.LockObject)
@@ -478,17 +421,24 @@ namespace ChatServer
                     .FirstOrDefault(f => f.fileId == fileId);
 
                 Console.WriteLine($"DownloadFile: id='{fileId}' found={file != null} bytes={file?.data?.Length ?? -1}");
+                
+                //check if null or not
                 return file?.data;
             }
         }
+
         public SharedFile ShareFile(string userId, string fileName, byte[] data, string channelName)
         {
             if (data == null || data.Length > 2 * 1024 * 1024)
+            {
                 return null;
+            }
 
             Channel channel = Storage.Channels.FirstOrDefault(x => x.channelName == channelName);
             if (channel == null)
+            {
                 return null;
+            }
 
             SharedFile file = new SharedFile
             {
@@ -504,7 +454,6 @@ namespace ChatServer
                 channel.files.Add(file);
             }
 
-
             List<IChatCallback> snapshot;
             lock (clientsLock)
             {
@@ -516,9 +465,11 @@ namespace ChatServer
                 try 
                 { 
                     client.ChannelViewUpdate(); 
-                }catch (Exception) 
+                }
+                catch (Exception) 
                 {
-                    lock (clientsLock) {
+                    lock (clientsLock) 
+                    {
                         clients.Remove(client);
                     }
                 }

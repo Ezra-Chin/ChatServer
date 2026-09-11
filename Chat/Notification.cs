@@ -8,9 +8,7 @@
         public bool read { get; set; }
 
         public Notification()
-        {
-
-        }
+        {}
         
         public Notification(string recipient, string sender, Message message, bool read)
         {

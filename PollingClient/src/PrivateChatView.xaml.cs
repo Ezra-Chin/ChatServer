@@ -22,8 +22,9 @@ namespace PollingClient.src
             this.sender = sender;
             this.recipient = recipient;
             RecipientText.Text = recipient;
-            Unloaded += (s, e) => StopPolling();
 
+            //when this window close, immediately run StopPolling func
+            Unloaded += (s, e) => StopPolling();
 
             StartPolling();
         }
@@ -44,6 +45,11 @@ namespace PollingClient.src
             }
             catch (TaskCanceledException)
             {
+                MessageBox.Show(
+                    "An error occurred while loading.", 
+                    "Error", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
         private void StopPolling()
@@ -52,8 +58,6 @@ namespace PollingClient.src
             {
                 cancellationTokenSource.Cancel();
             }
-
-         
         }
 
         private async Task LoadChat()
@@ -67,7 +71,11 @@ namespace PollingClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to load chat", "Unable to Load Chat", MessageBoxButton.OK);
+                MessageBox.Show(
+                    "Unable to load chat", 
+                    "Error", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -90,8 +98,11 @@ namespace PollingClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to Send Message", "Unable to send message", MessageBoxButton.OK);
-
+                MessageBox.Show(
+                    "Unable to Send Message", 
+                    "Error", 
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 

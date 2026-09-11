@@ -3,20 +3,15 @@ using System.Windows;
 
 namespace PollingClient
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         ChannelFactory<ChatContract.IPollingChatService> factory;
         ChatContract.IPollingChatService foob;
+        
         public MainWindow()
         {
             InitializeComponent();
-
             NetTcpBinding tcp = new NetTcpBinding();
-
-            //REMINDER TO CHANGE THIS DURING PROD 
             string URL = "net.tcp://localhost:9000/Chat/Polling";
 
             factory = new ChannelFactory<ChatContract.IPollingChatService>(tcp, URL);
@@ -27,21 +22,30 @@ namespace PollingClient
             {
                 if (MainFrame.Content is src.ChannelView channelView)
                 {
-                    try { 
+                    try 
+                    { 
                         foob.LeaveChannel(channelView.userId);
-                    } catch { }
-                    try { 
+                    } 
+                    catch 
+                    {}
+
+                    try 
+                    { 
                         foob.SignOut(channelView.userId); 
-                    } catch { }
+                    } 
+                    catch 
+                    {}
                 }
                 else if (MainFrame.Content is src.ChannelListPage channelListPage)
                 {
-                    try { 
+                    try 
+                    { 
                         foob.SignOut(channelListPage.userId); 
-                    } catch { }
+                    } 
+                    catch 
+                    {}
                 }
             };
-
             MainFrame.Navigate(new src.LoginView(foob));
         }
     }

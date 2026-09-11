@@ -7,10 +7,8 @@
     using System.Windows;
     using System.Windows.Controls;
 
-
     namespace DuplexClient.src
     {
-
         public partial class ChannelListPage : Page
         {
             private ChatContract.IChatService foob;
@@ -18,6 +16,7 @@
             private CancellationTokenSource cancellationTokenSource;
             private ChatCallbackImpl callback;
 
+            //initialise & load available channel list
             public ChannelListPage(string id, ChatContract.IChatService chatContract, ChatCallbackImpl callback)
             {
                 InitializeComponent();
@@ -30,6 +29,7 @@
                 LoadChannels();
             }
       
+            //refresh channel list page when channel is updated
             public void ChannelListUpdate()
             {
                 Dispatcher.Invoke(() =>
@@ -38,6 +38,7 @@
                 });
             }
 
+            //load all the available channels
             public async void LoadChannels()
             {
                 try
@@ -50,11 +51,15 @@
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                    MessageBox.Show(
+                        "An error occurred while loading channels.", 
+                        "Error", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Error);
                 }
             }
 
+            //join channel selected by user and open it
             private void Join_Click(object sender, RoutedEventArgs e)
             {
                 Button button = (Button)sender;
@@ -76,7 +81,7 @@
                 }
             }
 
-            //creates new channel
+            //create new channel
             private async void CreateChannel_Click(object sender, RoutedEventArgs e)
             {
                 string channelName = ChannelNameTextBox.Text.Trim();
@@ -119,6 +124,7 @@
                 }
             }
 
+            //sign out the current user and return to login page
             private void SignOut_Click(object sender, RoutedEventArgs e)
             {
                 try

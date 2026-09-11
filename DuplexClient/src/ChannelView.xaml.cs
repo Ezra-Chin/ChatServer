@@ -33,8 +33,6 @@ namespace DuplexClient.src
             LoadNotifications();
         }
 
-    
-
         public void ChannelViewUpdate()
         {
             Dispatcher.Invoke(() =>
@@ -44,6 +42,7 @@ namespace DuplexClient.src
             });
         }
 
+        //load unread noti and open priv chat when needed
         private async void LoadNotifications()
         {
             try
@@ -130,7 +129,7 @@ namespace DuplexClient.src
             }
         }
 
-        //leave current channel
+        //leave current channel and return to prev page
         private void Leave_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -163,7 +162,6 @@ namespace DuplexClient.src
             }
 
             OpenPrivateChat(selectedUser);
-
             MemberList.SelectedItem = null;
         }
 
@@ -191,11 +189,15 @@ namespace DuplexClient.src
             newWindow.Show();
         }
 
+        //download selected file and save to chosen location
         private async void FileList_DoubleClick(object sender, RoutedEventArgs e)
         {
             if (!(FileList.SelectedItem is SharedFile file))
+            {
                 return;
+            }
 
+            //extract the file extension (eg. .txt) 
             string ext = Path.GetExtension(file.fileName);   
 
             var dialog = new Microsoft.Win32.SaveFileDialog
@@ -203,18 +205,26 @@ namespace DuplexClient.src
                 FileName = file.fileName,
                 DefaultExt = ext,
                 AddExtension = true,
+                //restrict file window to only display this specific file tpye
                 Filter = $"{ext} file|*{ext}"
             };
 
             if (dialog.ShowDialog() != true)
+            {
                 return;
+            }
 
             string savePath = dialog.FileName;
+            //check if chosen path is missing correct file extension
             if (!savePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
-                savePath += ext;   
+            {
+                //force extension onto end of path if missing
+                savePath += ext;
+            }   
 
             try
             {
+                //download file in bg so UI wouldn't freeze
                 byte[] bytes = await Task.Run(() => foob.DownloadFile(channelName, file.fileId));
 
                 if (bytes == null || bytes.Length == 0)
@@ -232,9 +242,10 @@ namespace DuplexClient.src
             }
         }
 
-
+        //select and then share the file to current channel
         private async void ShareFile_Click(object sender, RoutedEventArgs e)
         {
+            //create new window to allow user to search and select the file 
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
             if (dialog.ShowDialog() != true)
             {

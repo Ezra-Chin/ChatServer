@@ -38,7 +38,12 @@ namespace PollingClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "An error occurred while signing in."); return;
+                MessageBox.Show(
+                    ex.ToString(), 
+                    "An error occurred while signing in."
+                    ); 
+                
+                return;
             }
         }
     }

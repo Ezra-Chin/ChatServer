@@ -9,7 +9,6 @@ using System.Windows.Controls;
 
 namespace PollingClient.src
 {
-
     public partial class ChannelListPage : Page
     {
         private ChatContract.IPollingChatService foob;
@@ -41,6 +40,11 @@ namespace PollingClient.src
             }
             catch (TaskCanceledException)
             {
+                MessageBox.Show(
+                    "An error occurred while loading channels.", 
+                    "Error", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
 
@@ -50,8 +54,6 @@ namespace PollingClient.src
             {
                 cancellationTokenSource.Cancel();
             }
-
-          
         }
 
         public async Task LoadChannels()
@@ -66,7 +68,11 @@ namespace PollingClient.src
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while loading channels.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "An error occurred while loading channels.", 
+                    "Error", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
 
@@ -84,7 +90,7 @@ namespace PollingClient.src
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Failed to join channel",
+                    "Failed to join channel",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
@@ -144,7 +150,7 @@ namespace PollingClient.src
             catch (Exception ex)
             {
                 MessageBox.Show(
-                  $"Failed to sign out",
+                  "Failed to sign out",
                   "Error",
                   MessageBoxButton.OK,
                   MessageBoxImage.Error);

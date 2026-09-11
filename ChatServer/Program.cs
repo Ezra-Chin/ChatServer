@@ -1,16 +1,13 @@
 ﻿using System;
 using System.ServiceModel;
 
-
 namespace ChatServer
 {
     class Program
     {
         static void Main(string[] args)
         {
-
-            ServiceHost host =
-            new ServiceHost(
+            ServiceHost host = new ServiceHost(
                 typeof(ChatService),
                 new Uri(
                 "net.tcp://localhost:9000/Chat"));
@@ -26,12 +23,8 @@ namespace ChatServer
                 "Polling");
 
             host.Open();
-
-            Console.WriteLine(
-                "Chat Server Running");
-
+            Console.WriteLine("Chat Server Running");
             Console.ReadLine();
-
             host.Close();
         }
     }

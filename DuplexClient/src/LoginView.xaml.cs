@@ -8,6 +8,7 @@ namespace DuplexClient.src
     {
         ChatContract.IChatService foob;
         ChatCallbackImpl callback;
+
         public LoginView(ChatContract.IChatService chatContract, ChatCallbackImpl callback)
         {
             InitializeComponent();
@@ -25,7 +26,6 @@ namespace DuplexClient.src
                 return;
             }
 
-
             try
             {
                 bool result = foob.SignIn(userId);
@@ -42,8 +42,6 @@ namespace DuplexClient.src
             {
                 MessageBox.Show(ex.ToString(), "An error occurred while signing in."); return;
             }
-
-
         }
     }
 }
