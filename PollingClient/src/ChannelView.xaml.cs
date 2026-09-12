@@ -310,8 +310,8 @@ namespace PollingClient.src
                     MessageBox.Show(
                        "Failed to share file.",
                        "Error",
-                       MessageBoxButton.OK)
-                       MessageBoxImage.Error;
+                       MessageBoxButton.OK,
+                       MessageBoxImage.Error);
                     return;
                 }
                 

@@ -45,11 +45,7 @@ namespace PollingClient.src
             }
             catch (TaskCanceledException)
             {
-                MessageBox.Show(
-                    "An error occurred while loading.", 
-                    "Error", 
-                    MessageBoxButton.OK, 
-                    MessageBoxImage.Error);
+              
             }
         }
         
